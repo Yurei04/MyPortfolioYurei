@@ -1,9 +1,85 @@
 @import "tailwindcss";
 
+/* ============================================================
+   ROOT THEME VARIABLES
+   Switch by setting data-theme on <html> or <body>
+   ============================================================ */
+
+/* ── DEFAULT (Tech) ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:            #080c10;
+  --bg-secondary:  #0d1520;
+  --surface:       #111c2a;
+  --border:        #1e3a52;
+  --fg:            #e2f0ff;
+  --fg-muted:      #6a8fa8;
+  --accent:        #00d4ff;
+  --accent-2:      #0080ff;
+  --accent-glow:   rgba(0, 212, 255, 0.25);
 }
+
+[data-theme="tech"] {
+  --bg:            #080c10;
+  --bg-secondary:  #0d1520;
+  --surface:       #111c2a;
+  --border:        #1e3a52;
+  --fg:            #e2f0ff;
+  --fg-muted:      #6a8fa8;
+  --accent:        #00d4ff;
+  --accent-2:      #0080ff;
+  --accent-glow:   rgba(0, 212, 255, 0.25);
+}
+
+[data-theme="fantasy-morning"] {
+  --bg:            #d6eff8;
+  --bg-secondary:  #eaf7e8;
+  --surface:       rgba(255, 255, 255, 0.72);
+  --border:        rgba(160, 210, 180, 0.55);
+  --fg:            #1e3a2a;
+  --fg-muted:      #4a7055;
+  --accent:        #e8a020;
+  --accent-2:      #5bbf6e;
+  --accent-glow:   rgba(232, 160, 32, 0.25);
+}
+
+[data-theme="fantasy-night"] {
+  --bg:            #060e1c;
+  --bg-secondary:  #0a1628;
+  --surface:       rgba(15, 30, 55, 0.80);
+  --border:        rgba(60, 110, 180, 0.35);
+  --fg:            #c8e4ff;
+  --fg-muted:      #5a84b0;
+  --accent:        #8bc4f8;
+  --accent-2:      #4a8fd4;
+  --accent-glow:   rgba(139, 196, 248, 0.25);
+}
+
+/* ============================================================
+   WIRE THE VARIABLES INTO TAILWIND UTILITIES
+   Use these like: bg-theme, text-fg, border-border, etc.
+   ============================================================ */
+@layer base {
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    transition: background-color 0.6s ease, color 0.6s ease;
+  }
+}
+
+@layer utilities {
+  .bg-theme         { background-color: var(--bg); }
+  .bg-theme-secondary { background-color: var(--bg-secondary); }
+  .bg-surface       { background-color: var(--surface); }
+  .border-theme     { border-color: var(--border); }
+  .text-fg          { color: var(--fg); }
+  .text-fg-muted    { color: var(--fg-muted); }
+  .text-accent      { color: var(--accent); }
+  .bg-accent        { background-color: var(--accent); }
+  .border-accent    { border-color: var(--accent); }
+  .shadow-accent    { box-shadow: 0 0 24px var(--accent-glow); }
+  .glow-accent      { box-shadow: 0 0 40px var(--accent-glow); }
+}
+
 
 @theme inline {
   --color-background: var(--background);
