@@ -1,9 +1,10 @@
 import AboutPage from "@/pages/aboutPage/aboutPage";
 import ExperiencePage from "@/pages/experiencePage/experiencePage";
 import HeroPage from "@/pages/hero/heroPage";
-import ProjectPage from "@/pages/projectPage/projectPage";
+
 import SkillsPage from "@/pages/skillsPage/skillsPage";
 import ThemeSwitcher from "./themeSwitch";
+import ProjectsPage from "@/pages/projectPage/projectPage";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
       <AboutPage />
       <ExperiencePage />
       <SkillsPage />
-      <ProjectPage />
+      <ProjectsPage />
     </div>
   );
 }
