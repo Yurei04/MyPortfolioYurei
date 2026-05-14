@@ -8,28 +8,28 @@ import { useTheme } from "@/app/themeProvider";
 
 const slides = [
   {
-    src: "/images/sphere.jpg",
+    src: "/images/projects/hexencore.png",
     title: "Project One",
     description: "A full-stack web application with real-time data sync and AI-powered recommendations.",
     tags: ["Next.js", "TypeScript", "OpenAI"],
     href: "/projects/project-one",
   },
   {
-    src: "/images/sphere.jpg",
+    src: "/images/projects/coalitus.png",
     title: "Project Two",
     description: "Scalable microservices architecture deployed on the edge with sub-50ms latency.",
     tags: ["Node.js", "Docker", "Redis"],
     href: "/projects/project-two",
   },
   {
-    src: "/images/sphere.jpg",
+    src: "/images/projects/byteon.png",
     title: "Project Three",
     description: "LLM-powered document intelligence platform with vector search and RAG pipeline.",
     tags: ["Python", "LangChain", "Pinecone"],
     href: "/projects/project-three",
   },
   {
-    src: "/images/sphere.jpg",
+    src: "/images/projects/coders.png",
     title: "Project Four",
     description: "Cross-platform mobile app with offline-first sync and local ML inference.",
     tags: ["React Native", "SQLite", "TFLite"],

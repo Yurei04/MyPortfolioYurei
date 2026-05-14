@@ -58,7 +58,7 @@ const THEME_CONFIG = {
       linear-gradient(135deg, #02040e 0%, #05091a 35%, #070f24 65%, #030710 100%)
     `,
     showGrid:     true,
-    gridColor:    "rgba(40,100,255,0.035)",
+    gridColor:    "rgba(40,100,255,0.15)",
     showNoise:    true,
     overlayColor: null,
 
@@ -94,7 +94,7 @@ const THEME_CONFIG = {
     bioColor: "rgba(148,180,255,0.6)",
 
     // currently working on
-    currentWork:       "Building an AI-powered code review tool",
+    currentWork:       "Building Coalitus Collective",
     currentWorkBg:     "rgba(30,70,180,0.18)",
     currentWorkBorder: "rgba(59,130,246,0.3)",
     currentWorkColor:  "rgba(148,180,255,0.9)",
@@ -146,7 +146,7 @@ const THEME_CONFIG = {
     fontFamily: "'Cinzel', Georgia, serif",
 
     bio:      "A world-builder and visual storyteller. I weave digital experiences that feel alive — blending artistry with code to create realms where creativity has no limits.",
-    bioColor: "rgba(40,90,50,0.72)",
+    bioColor: "rgba(40,90,50, 1)",
 
     currentWork:       "Crafting a realm atlas generator",
     currentWorkBg:     "rgba(60,140,60,0.1)",
