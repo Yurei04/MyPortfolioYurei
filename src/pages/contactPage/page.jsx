@@ -4,10 +4,20 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/app/themeProvider";
 import {
-  Mail, Phone, MapPin, Github, Linkedin,
-  Globe, Send, Copy, Check, ExternalLink,
-  Twitter, Instagram, MessageCircle,
-} from "lucide-react";
+  Mail,
+  Phone,
+  MapPin,
+  GitHub,
+  LinkedinIcon,
+  Globe,
+  Send,
+  Copy,
+  Check,
+  ExternalLink,
+  TwitterIcon,
+  InstagramIcon,
+  MessageCircle,
+} from "lucide-react"; 
 
 // ── Contact data — replace with your real info ─────────────
 const CONTACT_ITEMS = [
@@ -51,7 +61,7 @@ const SOCIAL_LINKS = [
     id: "github",
     label: "GitHub",
     handle: "@yourhandle",
-    Icon: Github,
+    Icon: GitHub,
     accent: "#e2e8f0",
     href: "https://github.com/yourhandle",
     desc: "Source code & open-source",
@@ -60,7 +70,7 @@ const SOCIAL_LINKS = [
     id: "linkedin",
     label: "LinkedIn",
     handle: "Your Name",
-    Icon: Linkedin,
+    Icon: LinkedinIcon,
     accent: "#0ea5e9",
     href: "https://linkedin.com/in/yourprofile",
     desc: "Professional network",
@@ -78,7 +88,7 @@ const SOCIAL_LINKS = [
     id: "twitter",
     label: "Twitter / X",
     handle: "@yourhandle",
-    Icon: Twitter,
+    Icon: TwitterIcon,
     accent: "#38bdf8",
     href: "https://twitter.com/yourhandle",
     desc: "Thoughts & updates",
@@ -87,7 +97,7 @@ const SOCIAL_LINKS = [
     id: "instagram",
     label: "Instagram",
     handle: "@yourhandle",
-    Icon: Instagram,
+    Icon: InstagramIcon,
     accent: "#f472b6",
     href: "https://instagram.com/yourhandle",
     desc: "Life beyond the screen",
