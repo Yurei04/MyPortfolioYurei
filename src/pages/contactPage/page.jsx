@@ -17,7 +17,7 @@ import {
   TwitterIcon,
   InstagramIcon,
   MessageCircle,
-} from "lucide-react"; 
+} from "react-icons/fa"
 
 // ── Contact data — replace with your real info ─────────────
 const CONTACT_ITEMS = [
