@@ -37,6 +37,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${playfair.variable} ${cinzel.variable} ${dmMono.variable}`}
+      suppressHydrationWarning
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>

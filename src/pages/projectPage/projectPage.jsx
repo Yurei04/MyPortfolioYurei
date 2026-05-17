@@ -954,8 +954,9 @@ export default function ProjectsPage() {
 
   // If active filter hides the selected project, close modal
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (selected && !filtered.find((pr) => pr.id === selected)) setSelected(null);
-  }, [filter]);
+  }, [filter, filtered, selected]);
 
   return (
     <div className="w-full relative overflow-hidden" style={{ fontFamily: p.fontFamily, minHeight: "100vh", paddingBottom: 40 }}>
