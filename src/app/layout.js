@@ -1,6 +1,6 @@
 
 import { Playfair_Display, Cinzel, DM_Mono } from "next/font/google";
-import { ThemeProvider } from "@/app/themeProvider";
+import { ThemeProvider } from "./themeProvider"; 
 import "./globals.css";
 
 const playfair = Playfair_Display({

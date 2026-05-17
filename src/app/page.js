@@ -1,10 +1,10 @@
 
-import ExperiencePage from "@/pages/experiencePage/experiencePage";
-import HeroPage from "@/pages/hero/heroPage";
-import SkillsPage from "@/pages/skillsPage/skillsPage";
-import ThemeSwitcher from "./themeSwitch";
-import ProjectsPage from "@/pages/projectPage/projectPage";
-import ContactPage from "@/pages/contactPage/contactPage";
+import ExperiencePage from "@/pages/experiencePage/page";
+import HeroPage from "@/pages/hero/page";
+import SkillsPage from "@/pages/skillsPage/page"; 
+import ThemeSwitcher from "./themeSwitch"; 
+import ProjectsPage from "@/pages/projectPage/page";
+import ContactPage from "@/pages/contactPage/page";
 
 export default function Home() {
   return (

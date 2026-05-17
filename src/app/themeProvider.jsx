@@ -39,6 +39,15 @@ export function ThemeProvider({ children }) {
 
 export function useTheme() {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used inside ThemeProvider");
+  if (!ctx) {
+    console.log("Theme context is NULL");
+    return {
+      theme: "tech",
+      setTheme: () => {},
+      isFantasy: false,
+      isNight: false,
+      toggleDayNight: () => {},
+    };
+  }
   return ctx;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "./themeProvider";
+import { useTheme } from "./themeProvider"; 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Computer, Moon, Sparkles, Sun } from "lucide-react"
