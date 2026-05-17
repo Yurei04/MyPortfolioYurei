@@ -4,19 +4,19 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/app/themeProvider";
 import {
-  Mail,
-  Phone,
-  MapPin,
-  GitHub,
-  LinkedinIcon,
-  Globe,
-  Send,
-  Copy,
-  Check,
-  ExternalLink,
-  TwitterIcon,
-  InstagramIcon,
-  MessageCircle,
+  FaEnvelope as Mail,
+  FaPhone as Phone,
+  FaMapMarkerAlt as MapPin,
+  FaGithub as GitHub,
+  FaLinkedin as LinkedinIcon,
+  FaGlobe as Globe,
+  FaPaperPlane as Send,
+  FaCopy as Copy,
+  FaCheck as Check,
+  FaExternalLinkAlt as ExternalLink,
+  FaTwitter as TwitterIcon,
+  FaInstagram as InstagramIcon,
+  FaCommentDots as MessageCircle,
 } from "react-icons/fa"
 
 // ── Contact data — replace with your real info ─────────────
