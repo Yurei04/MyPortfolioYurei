@@ -39,11 +39,11 @@ const MailIcon = () => (
 
 // ── Social links data — swap hrefs to match your real profiles ────
 const SOCIAL_LINKS = [
-  { Icon: GithubIcon,   href: "https://github.com/YureiYuri",          label: "GitHub"   },
-  { Icon: LinkedinIcon, href: "https://linkedin.com/in/yourusername",  label: "LinkedIn" },
-  { Icon: Code2,  href: "https://twitter.com/YureiYuri",         label: "Devpost"  },
-  { Icon: MailIcon,     href: "mailto:hello@youremail.com",            label: "Email"    },
-  { Icon: Computer,     href: "mailto:hello@youremail.com",            label: "HuggingFace"    },
+  { Icon: GithubIcon,   href: "https://github.com/yurei04",          label: "GitHub"   },
+  { Icon: LinkedinIcon, href: "https://www.linkedin.com/in/james-yuri-avila-76907b310/",  label: "LinkedIn" },
+  { Icon: Code2,  href: "https://devpost.com/jamesavila540",         label: "Devpost"  },
+  { Icon: MailIcon,     href: "jamesavila540@gmail.com",            label: "Email"    },
+  { Icon: Computer,     href: "https://huggingface.co/YureiYuri",            label: "HuggingFace"    },
 ];
 
 // ── Per-theme config ──────────────────────────────────────

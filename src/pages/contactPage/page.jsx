@@ -18,17 +18,18 @@ import {
   FaInstagram as InstagramIcon,
   FaCommentDots as MessageCircle,
 } from "react-icons/fa"
+import { ComputerIcon } from "lucide-react";
 
 // ── Contact data — replace with your real info ─────────────
 const CONTACT_ITEMS = [
   {
     id: "email",
     label: "Email",
-    value: "hello@yourname.dev",
-    display: "hello@yourname.dev",
+    value: "jamesavila540@gmail.com",
+    display: "jamesavila540@gmail.com",
     Icon: Mail,
     accent: "#6ea0ff",
-    href: "mailto:hello@yourname.dev",
+    href: "jamesavila540@gmail.com",
     copyable: true,
     desc: "Best way to reach me. I typically reply within 24 hours.",
   },
@@ -63,16 +64,16 @@ const SOCIAL_LINKS = [
     handle: "@yourhandle",
     Icon: GitHub,
     accent: "#e2e8f0",
-    href: "https://github.com/yourhandle",
+    href: "https://github.com/yurei04",
     desc: "Source code & open-source",
   },
   {
     id: "linkedin",
     label: "LinkedIn",
-    handle: "Your Name",
+    handle: "James Yuri Avila",
     Icon: LinkedinIcon,
     accent: "#0ea5e9",
-    href: "https://linkedin.com/in/yourprofile",
+    href: "https://www.linkedin.com/in/james-yuri-avila-76907b310/",
     desc: "Professional network",
   },
   {
@@ -81,26 +82,17 @@ const SOCIAL_LINKS = [
     handle: "@yourhandle",
     Icon: Globe,
     accent: "#a78bfa",
-    href: "https://devpost.com/yourhandle",
+    href: "https://devpost.com/jamesavila540",
     desc: "Hackathon submissions",
   },
   {
-    id: "twitter",
-    label: "Twitter / X",
+    id: "huggingFace",
+    label: "Hugging Face",
     handle: "@yourhandle",
-    Icon: TwitterIcon,
+    Icon: ComputerIcon,
     accent: "#38bdf8",
-    href: "https://twitter.com/yourhandle",
-    desc: "Thoughts & updates",
-  },
-  {
-    id: "instagram",
-    label: "Instagram",
-    handle: "@yourhandle",
-    Icon: InstagramIcon,
-    accent: "#f472b6",
-    href: "https://instagram.com/yourhandle",
-    desc: "Life beyond the screen",
+    href: "https://huggingface.co/YureiYuri",
+    desc: "AI / ML models",
   },
 ];
 
