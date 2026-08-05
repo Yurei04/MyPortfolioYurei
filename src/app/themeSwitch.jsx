@@ -232,7 +232,7 @@ export default function ThemeSwitcher() {
           onMouseLeave={(e) => { if (!isFantasy) e.currentTarget.style.color = "rgba(255,255,255,0.38)"; }}
         >
           <span style={{ fontSize: "1rem", lineHeight: 1 }}><Sparkles /></span>
-          Fantasy
+          Design
         </motion.button>
 
         {/* ── Day/Night toggle — animates in when fantasy ── */}

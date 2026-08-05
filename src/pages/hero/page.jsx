@@ -5,13 +5,19 @@ import ClockStatus from "@/components/heroComp/clockStatus";
 import { useTheme } from "@/app/themeProvider";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Code2, Computer } from "lucide-react";
+import { Code2, Computer, Sparkles } from "lucide-react";
 
 // ── Animation helpers ─────────────────────────────────────
 const fadeUp = (delay = 0, x = 0) => ({
   initial:    { opacity: 0, y: 28, x },
   animate:    { opacity: 1, y: 0, x: 0 },
   transition: { duration: 0.85, delay, ease: [0.22, 1, 0.36, 1] },
+});
+
+const floatIn = (delay = 0) => ({
+  initial:    { opacity: 0, y: 20 },
+  animate:    { opacity: 1, y: 0 },
+  transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
 });
 
 // ── SVG Social Icons ──────────────────────────────────────
@@ -37,7 +43,6 @@ const MailIcon = () => (
   </svg>
 );
 
-// ── Social links data — swap hrefs to match your real profiles ────
 const SOCIAL_LINKS = [
   { Icon: GithubIcon,   href: "https://github.com/yurei04",          label: "GitHub"   },
   { Icon: LinkedinIcon, href: "https://www.linkedin.com/in/james-yuri-avila-76907b310/",  label: "LinkedIn" },
@@ -49,7 +54,6 @@ const SOCIAL_LINKS = [
 // ── Per-theme config ──────────────────────────────────────
 const THEME_CONFIG = {
   tech: {
-    // backgrounds
     bgImage:    null,
     bgGradient: `
       radial-gradient(ellipse 80% 60% at 10% 90%, rgba(17,51,153,0.55) 0%, transparent 60%),
@@ -62,7 +66,6 @@ const THEME_CONFIG = {
     showNoise:    true,
     overlayColor: null,
 
-    // name block
     nameColor:        "#e8f0ff",
     nameHoverColor:   "#a0c4ff",
     nameHoverShadow:  "0 0 24px rgba(99,160,255,0.6)",
@@ -71,44 +74,39 @@ const THEME_CONFIG = {
     borderColor:      "rgba(59,130,246,0.5)",
     borderHoverColor: "rgba(99,160,255,0.8)",
 
-    // big heading
     headingGradient:      "linear-gradient(135deg, #c8d8ff 0%, #6ea0ff 50%, #3b6fd4 100%)",
     headingHoverGradient: "linear-gradient(135deg, #ffffff 0%, #a8c8ff 40%, #6ea0ff 100%)",
     headingHoverShadow:   "drop-shadow(0 0 30px rgba(99,160,255,0.35))",
     headingLine1:         "Full Stack",
     headingLine2:         "AI DEVELOPER",
 
-    // separator + handle
     separatorBg:     "linear-gradient(90deg, rgba(59,130,246,0.9) 0%, rgba(99,160,255,0.35) 80%, transparent 100%)",
     handleColor:     "rgba(148,180,255,0.6)",
     handleHoverColor:"rgba(180,210,255,0.85)",
     handleShadow:    "0 0 18px rgba(99,160,255,0.5)",
     scrollColor:     "rgba(99,160,255,0.3)",
 
-    // identity
     titleTags:  ["Full Stack Developer", "AI Developer"],
     fontFamily: "'Playfair Display', Georgia, serif",
 
-    // bio
     bio:      "I build full-stack systems and AI-powered tools — crafting products where intelligent design meets robust engineering. Clean code, meaningful experiences, always.",
     bioColor: "rgba(148,180,255,0.6)",
 
-    // currently working on
     currentWork:       "Building Coalitus Collective",
     currentWorkBg:     "rgba(30,70,180,0.18)",
     currentWorkBorder: "rgba(59,130,246,0.3)",
     currentWorkColor:  "rgba(148,180,255,0.9)",
     currentWorkDot:    "#6ea0ff",
 
-    // social links
     socialColor:      "rgba(99,140,220,0.5)",
     socialHoverColor: "rgba(148,180,255,0.95)",
     socialHoverBg:    "rgba(59,130,246,0.1)",
     socialBorder:     "rgba(59,130,246,0.18)",
 
-    // right panel
     panelLabel:      "// recent.work",
     panelLabelColor: "rgba(99,140,220,0.45)",
+    
+    layoutMode:      "tech",
   },
 
   "fantasy-morning": {
@@ -146,7 +144,7 @@ const THEME_CONFIG = {
     fontFamily: "'Cinzel', Georgia, serif",
 
     bio:      "A world-builder and visual storyteller. I weave digital experiences that feel alive — blending artistry with code to create realms where creativity has no limits.",
-    bioColor: "rgba(40,90,50, 1)",
+    bioColor: "rgba(40,90,50,0.85)",
 
     currentWork:       "Crafting a realm atlas generator",
     currentWorkBg:     "rgba(60,140,60,0.1)",
@@ -161,6 +159,8 @@ const THEME_CONFIG = {
 
     panelLabel:      "✦ recent work ✦",
     panelLabelColor: "rgba(60,120,60,0.45)",
+    
+    layoutMode:      "design",
   },
 
   "fantasy-night": {
@@ -213,6 +213,8 @@ const THEME_CONFIG = {
 
     panelLabel:      "✦ lore & legend ✦",
     panelLabelColor: "rgba(100,150,210,0.45)",
+    
+    layoutMode:      "design",
   },
 };
 
@@ -247,7 +249,6 @@ function CurrentlyWorking({ cfg }) {
         width:         "fit-content",
       }}
     >
-      {/* Pulsing dot */}
       <motion.div
         animate={{ opacity: [1, 0.25, 1], scale: [1, 0.85, 1] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -273,13 +274,13 @@ function CurrentlyWorking({ cfg }) {
 }
 
 // ── Social Links ──────────────────────────────────────────
-function SocialLinks({ cfg }) {
+function SocialLinks({ cfg, isDesign }) {
   const [hovered, setHovered] = useState(null);
 
   return (
     <motion.div
       {...fadeUp(0.95)}
-      style={{ display: "flex", alignItems: "center", gap: 4 }}
+      style={{ display: "flex", alignItems: "center", gap: isDesign ? 8 : 4 }}
     >
       {SOCIAL_LINKS.map(({ Icon, href, label }, i) => (
         <motion.a
@@ -296,9 +297,9 @@ function SocialLinks({ cfg }) {
             display:         "flex",
             alignItems:      "center",
             justifyContent:  "center",
-            width:           34,
-            height:          34,
-            borderRadius:    8,
+            width:           isDesign ? 40 : 34,
+            height:          isDesign ? 40 : 34,
+            borderRadius:    isDesign ? 12 : 8,
             color:           hovered === i ? cfg.socialHoverColor : cfg.socialColor,
             background:      hovered === i ? cfg.socialHoverBg    : "transparent",
             border:          `1px solid ${hovered === i ? cfg.borderHoverColor : cfg.socialBorder}`,
@@ -311,12 +312,12 @@ function SocialLinks({ cfg }) {
         </motion.a>
       ))}
 
-      {/* Thin divider */}
+      {/* Divider */}
       <div style={{
         width:      1,
         height:     16,
         background: cfg.borderColor,
-        margin:     "0 6px",
+        margin:     isDesign ? "0 10px" : "0 6px",
         opacity:    0.4,
       }} />
 
@@ -325,10 +326,9 @@ function SocialLinks({ cfg }) {
   );
 }
 
-// ── Theme-aware decorative accent (top-right) ─────────────
+// ── Decorative accent ─────────────────────────────────────
 function DecorativeAccent({ theme, cfg }) {
   if (theme === "tech") {
-    // Subtle glowing orb
     return (
       <motion.div
         animate={{ scale: [1, 1.1, 1], opacity: [0.07, 0.13, 0.07] }}
@@ -347,53 +347,430 @@ function DecorativeAccent({ theme, cfg }) {
       />
     );
   }
-  if (theme === "fantasy-morning") {
-    // Warm golden glow
-    return (
-      <motion.div
-        animate={{ scale: [1, 1.06, 1], opacity: [0.12, 0.2, 0.12] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        style={{
-          position:     "absolute",
-          width:        420,
-          height:       420,
-          borderRadius: "50%",
-          background:   "radial-gradient(circle, rgba(255,220,80,0.22) 0%, rgba(80,180,80,0.1) 50%, transparent 70%)",
-          top:          "-60px",
-          right:        "80px",
-          pointerEvents:"none",
-          zIndex:       2,
-        }}
-      />
-    );
-  }
-  if (theme === "fantasy-night") {
-    // Cool moon-like glow
-    return (
-      <motion.div
-        animate={{ scale: [1, 1.08, 1], opacity: [0.08, 0.15, 0.08] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        style={{
-          position:     "absolute",
-          width:        400,
-          height:       400,
-          borderRadius: "50%",
-          background:   "radial-gradient(circle, rgba(139,196,248,0.18) 0%, rgba(40,80,180,0.08) 55%, transparent 70%)",
-          top:          "-70px",
-          right:        "100px",
-          pointerEvents:"none",
-          zIndex:       2,
-        }}
-      />
-    );
-  }
-  return null;
+  return (
+    <motion.div
+      animate={{ scale: [1, 1.08, 1], opacity: [0.1, 0.18, 0.1] }}
+      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      style={{
+        position:     "absolute",
+        width:        400,
+        height:       400,
+        borderRadius: "50%",
+        background:   theme === "fantasy-morning"
+          ? "radial-gradient(circle, rgba(180,220,100,0.25) 0%, rgba(80,180,80,0.1) 50%, transparent 70%)"
+          : "radial-gradient(circle, rgba(139,196,248,0.18) 0%, rgba(40,80,180,0.08) 55%, transparent 70%)",
+        top:          "-70px",
+        right:        "100px",
+        pointerEvents:"none",
+        zIndex:       2,
+      }}
+    />
+  );
 }
 
-// ── Hero Page ─────────────────────────────────────────────
+// ── TECH MODE LAYOUT ──────────────────────────────────────
+function TechLayout({ cfg, nameHovered, portfolioHovered, yureiHovered, setNameHovered, setPortfolioHovered, setYureiHovered }) {
+  return (
+    <div
+      style={{
+        display:        "flex",
+        flexDirection:  "column",
+        justifyContent: "space-between",
+        paddingRight:   40,
+        paddingBottom:  32,
+      }}
+    >
+      {/* TOP */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <motion.div
+          {...fadeUp(0.1)}
+          onMouseEnter={() => setNameHovered(true)}
+          onMouseLeave={() => setNameHovered(false)}
+          style={{
+            display:       "inline-flex",
+            flexDirection: "column",
+            gap:           4,
+            cursor:        "default",
+            alignSelf:     "flex-start",
+          }}
+        >
+          <motion.span
+            animate={{
+              color:      nameHovered ? cfg.nameHoverColor : cfg.nameColor,
+              textShadow: nameHovered ? cfg.nameHoverShadow : "0 0 0px transparent",
+            }}
+            transition={{ duration: 0.3 }}
+            style={{ fontSize: "1.25rem", fontWeight: 600, letterSpacing: "0.01em" }}
+          >
+            James Yuri R. Avila
+          </motion.span>
+
+          <motion.div
+            animate={{ borderLeftColor: nameHovered ? cfg.borderHoverColor : cfg.borderColor }}
+            transition={{ duration: 0.3 }}
+            style={{
+              marginTop:     4,
+              display:       "flex",
+              flexDirection: "column",
+              gap:           2,
+              paddingLeft:   14,
+              borderLeft:    `2px solid ${cfg.borderColor}`,
+            }}
+          >
+            {cfg.titleTags.map((t, i) => (
+              <span
+                key={i}
+                style={{
+                  color:         nameHovered ? cfg.titleHoverColor : cfg.titleColor,
+                  fontSize:      "0.72rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  fontFamily:    "'DM Mono', monospace",
+                  transition:    "color 0.3s",
+                }}
+              >
+                {t}
+              </span>
+            ))}
+          </motion.div>
+
+          <div style={{ marginTop: 10 }}>
+            <ClockStatus />
+          </div>
+        </motion.div>
+
+        <CurrentlyWorking cfg={cfg} />
+      </div>
+
+      {/* SPACER */}
+      <div style={{ flex: 1 }} />
+
+      {/* BOTTOM */}
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <motion.h1
+          initial={{ opacity: 0, x: -60 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          onMouseEnter={() => setPortfolioHovered(true)}
+          onMouseLeave={() => setPortfolioHovered(false)}
+          style={{
+            fontSize:             "clamp(3.5rem, 8vw, 6.5rem)",
+            fontWeight:           700,
+            lineHeight:           0.92,
+            letterSpacing:        "-0.025em",
+            color:                "transparent",
+            backgroundClip:       "text",
+            WebkitBackgroundClip: "text",
+            backgroundImage:      portfolioHovered ? cfg.headingHoverGradient : cfg.headingGradient,
+            marginBottom:         "0.7rem",
+            cursor:               "default",
+            filter:               portfolioHovered ? cfg.headingHoverShadow : "none",
+            transition:           "filter 0.4s, background-image 0.5s",
+          }}
+        >
+          {cfg.headingLine1}
+          <br />
+          {cfg.headingLine2}
+        </motion.h1>
+
+        <motion.p
+          {...fadeUp(0.5)}
+          style={{
+            fontFamily:    "'DM Mono', monospace",
+            fontSize:      "0.78rem",
+            lineHeight:    1.75,
+            color:         cfg.bioColor,
+            maxWidth:      400,
+            marginBottom:  "1.25rem",
+            letterSpacing: "0.008em",
+            transition:    "color 0.5s",
+          }}
+        >
+          {cfg.bio}
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+          style={{
+            display:     "flex",
+            alignItems:  "center",
+            gap:         16,
+            marginBottom: 14,
+          }}
+        >
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              flex:            1,
+              transformOrigin: "left center",
+              height:          "1.5px",
+              background:      cfg.separatorBg,
+              transition:      "background 0.6s",
+            }}
+          />
+
+          <motion.span
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 1.0 }}
+            onMouseEnter={() => setYureiHovered(true)}
+            onMouseLeave={() => setYureiHovered(false)}
+            style={{
+              color:         yureiHovered ? cfg.handleHoverColor : cfg.handleColor,
+              fontSize:      "clamp(0.9rem, 1.6vw, 1.2rem)",
+              fontWeight:    400,
+              letterSpacing: "0.05em",
+              fontStyle:     "italic",
+              whiteSpace:    "nowrap",
+              cursor:        "default",
+              textShadow:    yureiHovered ? cfg.handleShadow : "none",
+              transition:    "color 0.3s, text-shadow 0.3s",
+            }}
+          >
+            @YureiYuri
+          </motion.span>
+        </motion.div>
+
+        <SocialLinks cfg={cfg} isDesign={false} />
+      </div>
+    </div>
+  );
+}
+
+// ── DESIGN MODE LAYOUT ────────────────────────────────────
+function DesignLayout({ cfg, nameHovered, portfolioHovered, yureiHovered, setNameHovered, setPortfolioHovered, setYureiHovered }) {
+  return (
+    <div
+      style={{
+        display:        "flex",
+        flexDirection:  "column",
+        justifyContent: "space-between",
+        paddingRight:   40,
+        paddingBottom:  32,
+        height:         "100%",
+      }}
+    >
+      {/* TOP - Artist name & role */}
+      <motion.div
+        {...floatIn(0.05)}
+        onMouseEnter={() => setNameHovered(true)}
+        onMouseLeave={() => setNameHovered(false)}
+        style={{
+          display:       "inline-flex",
+          flexDirection: "column",
+          gap:           12,
+          cursor:        "default",
+          alignSelf:     "flex-start",
+        }}
+      >
+        <motion.span
+          animate={{
+            color:      nameHovered ? cfg.nameHoverColor : cfg.nameColor,
+            textShadow: nameHovered ? cfg.nameHoverShadow : "0 0 0px transparent",
+          }}
+          transition={{ duration: 0.4 }}
+          style={{
+            fontSize:      "1.15rem",
+            fontWeight:    600,
+            letterSpacing: "0.02em",
+            fontFamily:    cfg.fontFamily,
+          }}
+        >
+          James Yuri R. Avila
+        </motion.span>
+
+        <motion.div
+          animate={{ borderLeftColor: nameHovered ? cfg.borderHoverColor : cfg.borderColor }}
+          transition={{ duration: 0.4 }}
+          style={{
+            display:       "flex",
+            flexDirection: "column",
+            gap:           6,
+            paddingLeft:   16,
+            borderLeft:    `2.5px solid ${cfg.borderColor}`,
+          }}
+        >
+          {cfg.titleTags.map((t, i) => (
+            <span
+              key={i}
+              style={{
+                color:         nameHovered ? cfg.titleHoverColor : cfg.titleColor,
+                fontSize:      "0.75rem",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                fontFamily:    "'DM Mono', monospace",
+                transition:    "color 0.4s",
+              }}
+            >
+              {t}
+            </span>
+          ))}
+        </motion.div>
+
+        <div style={{ marginTop: 6 }}>
+          <ClockStatus />
+        </div>
+      </motion.div>
+
+      {/* Currently working with floating badge */}
+      <motion.div
+        {...floatIn(0.2)}
+        style={{
+          display:       "inline-flex",
+          alignItems:    "center",
+          gap:           12,
+          padding:       "10px 16px",
+          borderRadius:  20,
+          background:    cfg.currentWorkBg,
+          border:        `1.5px solid ${cfg.currentWorkBorder}`,
+          backdropFilter:"blur(12px)",
+          width:         "fit-content",
+        }}
+      >
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            width: 8, height: 8,
+            borderRadius: "50%",
+            background: cfg.currentWorkDot,
+            boxShadow: `0 0 12px ${cfg.currentWorkDot}`,
+            flexShrink: 0,
+          }}
+        />
+        <span style={{
+          fontFamily:    "'DM Mono', monospace",
+          fontSize:      "0.65rem",
+          letterSpacing: "0.12em",
+          color:         cfg.currentWorkColor,
+          textTransform: "uppercase",
+          whiteSpace:    "nowrap",
+        }}>
+          {cfg.currentWork}
+        </span>
+      </motion.div>
+
+      {/* SPACER */}
+      <div style={{ flex: 1 }} />
+
+      {/* BOTTOM - Large artistic heading */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        
+        {/* Artistic divider */}
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            height:          "2px",
+            background:      cfg.separatorBg,
+            transformOrigin: "left center",
+            transition:      "background 0.6s",
+          }}
+        />
+
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          onMouseEnter={() => setPortfolioHovered(true)}
+          onMouseLeave={() => setPortfolioHovered(false)}
+          style={{
+            fontSize:             "clamp(3.2rem, 7.5vw, 6rem)",
+            fontWeight:           700,
+            lineHeight:           0.95,
+            letterSpacing:        "-0.02em",
+            color:                "transparent",
+            backgroundClip:       "text",
+            WebkitBackgroundClip: "text",
+            backgroundImage:      portfolioHovered ? cfg.headingHoverGradient : cfg.headingGradient,
+            cursor:               "default",
+            filter:               portfolioHovered ? cfg.headingHoverShadow : "none",
+            transition:           "filter 0.5s, background-image 0.6s",
+            fontFamily:           cfg.fontFamily,
+          }}
+        >
+          {cfg.headingLine1}
+          <br />
+          {cfg.headingLine2}
+        </motion.h1>
+
+        {/* Elegant bio */}
+        <motion.p
+          {...floatIn(0.4)}
+          style={{
+            fontFamily:    "'DM Mono', monospace",
+            fontSize:      "0.8rem",
+            lineHeight:    1.85,
+            color:         cfg.bioColor,
+            maxWidth:      420,
+            marginBottom:  "8px",
+            letterSpacing: "0.01em",
+            transition:    "color 0.5s",
+          }}
+        >
+          {cfg.bio}
+        </motion.p>
+
+        {/* Handle with artistic flair */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.55 }}
+          style={{
+            display:     "flex",
+            alignItems:  "center",
+            gap:         12,
+            marginBottom: 20,
+          }}
+        >
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              width: 2,
+              height: 2,
+              borderRadius: "50%",
+              background: cfg.borderColor,
+              opacity: 0.6,
+            }}
+          />
+
+          <motion.span
+            onMouseEnter={() => setYureiHovered(true)}
+            onMouseLeave={() => setYureiHovered(false)}
+            style={{
+              color:         yureiHovered ? cfg.handleHoverColor : cfg.handleColor,
+              fontSize:      "1.05rem",
+              fontWeight:    400,
+              letterSpacing: "0.06em",
+              fontStyle:     "italic",
+              cursor:        "default",
+              textShadow:    yureiHovered ? cfg.handleShadow : "none",
+              transition:    "color 0.3s, text-shadow 0.3s",
+              fontFamily:    cfg.fontFamily,
+            }}
+          >
+            @YureiYuri
+          </motion.span>
+        </motion.div>
+
+        {/* Social links - larger spacing */}
+        <SocialLinks cfg={cfg} isDesign={true} />
+      </div>
+    </div>
+  );
+}
+
+// ── Main Hero Page ─────────────────────────────────────────
 export default function HeroPage() {
   const { theme } = useTheme();
   const cfg = THEME_CONFIG[theme] ?? THEME_CONFIG.tech;
+  const isDesignMode = cfg.layoutMode === "design";
 
   const [nameHovered,      setNameHovered]      = useState(false);
   const [portfolioHovered, setPortfolioHovered] = useState(false);
@@ -447,14 +824,10 @@ export default function HeroPage() {
         />
       )}
 
-      {/* ── Theme decorative accent ── */}
+      {/* ── Decorative accent ── */}
       <DecorativeAccent theme={theme} cfg={cfg} />
 
-      {/* ════════════════════════════════════════════════
-          Main two-column layout
-          Left  → identity + bio + heading + socials
-          Right → project carousel
-      ════════════════════════════════════════════════ */}
+      {/* ── Main layout ── */}
       <div
         style={{
           position:            "relative",
@@ -463,188 +836,34 @@ export default function HeroPage() {
           display:             "grid",
           gridTemplateColumns: "1fr 300px",
           gap:                 0,
-          padding:             "80px 32px 0 48px",
+          padding:             isDesignMode ? "60px 32px 0 48px" : "80px 32px 0 48px",
           minHeight:           "calc(100vh - 80px)",
         }}
       >
-        {/* ══ LEFT COLUMN ══════════════════════════════ */}
-        <div
-          style={{
-            display:        "flex",
-            flexDirection:  "column",
-            justifyContent: "space-between",
-            paddingRight:   40,
-            paddingBottom:  32,
-          }}
-        >
-          {/* ── TOP: Name + roles + clock + currently working ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {/* LEFT COLUMN */}
+        {isDesignMode ? (
+          <DesignLayout
+            cfg={cfg}
+            nameHovered={nameHovered}
+            portfolioHovered={portfolioHovered}
+            yureiHovered={yureiHovered}
+            setNameHovered={setNameHovered}
+            setPortfolioHovered={setPortfolioHovered}
+            setYureiHovered={setYureiHovered}
+          />
+        ) : (
+          <TechLayout
+            cfg={cfg}
+            nameHovered={nameHovered}
+            portfolioHovered={portfolioHovered}
+            yureiHovered={yureiHovered}
+            setNameHovered={setNameHovered}
+            setPortfolioHovered={setPortfolioHovered}
+            setYureiHovered={setYureiHovered}
+          />
+        )}
 
-            {/* Name block */}
-            <motion.div
-              {...fadeUp(0.1)}
-              onMouseEnter={() => setNameHovered(true)}
-              onMouseLeave={() => setNameHovered(false)}
-              style={{
-                display:       "inline-flex",
-                flexDirection: "column",
-                gap:           4,
-                cursor:        "default",
-                alignSelf:     "flex-start",
-              }}
-            >
-              <motion.span
-                animate={{
-                  color:      nameHovered ? cfg.nameHoverColor : cfg.nameColor,
-                  textShadow: nameHovered ? cfg.nameHoverShadow : "0 0 0px transparent",
-                }}
-                transition={{ duration: 0.3 }}
-                style={{ fontSize: "1.25rem", fontWeight: 600, letterSpacing: "0.01em" }}
-              >
-                James Yuri R. Avila
-              </motion.span>
-
-              <motion.div
-                animate={{ borderLeftColor: nameHovered ? cfg.borderHoverColor : cfg.borderColor }}
-                transition={{ duration: 0.3 }}
-                style={{
-                  marginTop:     4,
-                  display:       "flex",
-                  flexDirection: "column",
-                  gap:           2,
-                  paddingLeft:   14,
-                  borderLeft:    `2px solid ${cfg.borderColor}`,
-                }}
-              >
-                {cfg.titleTags.map((t, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      color:         nameHovered ? cfg.titleHoverColor : cfg.titleColor,
-                      fontSize:      "0.72rem",
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      fontFamily:    "'DM Mono', monospace",
-                      transition:    "color 0.3s",
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </motion.div>
-
-              <div style={{ marginTop: 10 }}>
-                <ClockStatus />
-              </div>
-            </motion.div>
-
-            {/* Currently working on pill */}
-            <CurrentlyWorking cfg={cfg} />
-          </div>
-
-          {/* ── SPACER ── */}
-          <div style={{ flex: 1 }} />
-
-          {/* ── BOTTOM: Heading + bio + separator + handle + socials ── */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-
-            {/* Big heading */}
-            <motion.h1
-              initial={{ opacity: 0, x: -60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              onMouseEnter={() => setPortfolioHovered(true)}
-              onMouseLeave={() => setPortfolioHovered(false)}
-              style={{
-                fontSize:             "clamp(3.5rem, 8vw, 6.5rem)",
-                fontWeight:           700,
-                lineHeight:           0.92,
-                letterSpacing:        "-0.025em",
-                color:                "transparent",
-                backgroundClip:       "text",
-                WebkitBackgroundClip: "text",
-                backgroundImage:      portfolioHovered ? cfg.headingHoverGradient : cfg.headingGradient,
-                marginBottom:         "0.7rem",
-                cursor:               "default",
-                filter:               portfolioHovered ? cfg.headingHoverShadow : "none",
-                transition:           "filter 0.4s, background-image 0.5s",
-              }}
-            >
-              {cfg.headingLine1}
-              <br />
-              {cfg.headingLine2}
-            </motion.h1>
-
-            {/* Bio blurb — swap with your actual bio */}
-            <motion.p
-              {...fadeUp(0.5)}
-              style={{
-                fontFamily:    "'DM Mono', monospace",
-                fontSize:      "0.78rem",
-                lineHeight:    1.75,
-                color:         cfg.bioColor,
-                maxWidth:      400,
-                marginBottom:  "1.25rem",
-                letterSpacing: "0.008em",
-                transition:    "color 0.5s",
-              }}
-            >
-              {cfg.bio}
-            </motion.p>
-
-            {/* Separator + handle */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
-              style={{
-                display:     "flex",
-                alignItems:  "center",
-                gap:         16,
-                marginBottom: 14,
-              }}
-            >
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 1.1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                style={{
-                  flex:            1,
-                  transformOrigin: "left center",
-                  height:          "1.5px",
-                  background:      cfg.separatorBg,
-                  transition:      "background 0.6s",
-                }}
-              />
-
-              <motion.span
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.7, delay: 1.0 }}
-                onMouseEnter={() => setYureiHovered(true)}
-                onMouseLeave={() => setYureiHovered(false)}
-                style={{
-                  color:         yureiHovered ? cfg.handleHoverColor : cfg.handleColor,
-                  fontSize:      "clamp(0.9rem, 1.6vw, 1.2rem)",
-                  fontWeight:    400,
-                  letterSpacing: "0.05em",
-                  fontStyle:     "italic",
-                  whiteSpace:    "nowrap",
-                  cursor:        "default",
-                  textShadow:    yureiHovered ? cfg.handleShadow : "none",
-                  transition:    "color 0.3s, text-shadow 0.3s",
-                }}
-              >
-                @YureiYuri
-              </motion.span>
-            </motion.div>
-
-            {/* Social links + scroll indicator */}
-            <SocialLinks cfg={cfg} />
-          </div>
-        </div>
-
-        {/* ══ RIGHT COLUMN — project carousel ══════════ */}
+        {/* RIGHT COLUMN — carousel */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
@@ -660,7 +879,6 @@ export default function HeroPage() {
             maxHeight:      "calc(100vh - 100px)",
           }}
         >
-          {/* Eyebrow label */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

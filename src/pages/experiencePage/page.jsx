@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTheme } from "@/app/themeProvider";
 import { Bot, Monitor, Layers, PenTool, Sparkles, Zap } from "lucide-react";
 
-// ── Experience data ───────────────────────────────────────
+// ── Experience data with category ─────────────────────────
 const EXPERIENCES = [
   {
     id:       "kinetiks-1",
@@ -14,6 +14,7 @@ const EXPERIENCES = [
     period:   "Nov 2024",
     location: "Remote · San Francisco, US",
     Icon:     Zap,
+    category: "tech",
     desc:     "Built a winning conceptual prototype — responsible for AI framework diagrams and core code functionality for the KINETIKS competition.",
   },
   {
@@ -24,6 +25,7 @@ const EXPERIENCES = [
     period:   "May – Jul 2025",
     location: "Remote · New York, US",
     Icon:     Monitor,
+    category: "tech",
     desc:     "Developed front-end experiences with Next.js, smooth scroll animations, and interactive effects. Collaborated with executives on UI/UX direction.",
   },
   {
@@ -34,6 +36,7 @@ const EXPERIENCES = [
     period:   "Jul 2025 – Present",
     location: "Remote · New York, US",
     Icon:     Layers,
+    category: "design",
     desc:     "Creating multimedia content and social media visuals that drive engagement and communicate the Hack United brand across platforms.",
   },
   {
@@ -44,6 +47,7 @@ const EXPERIENCES = [
     period:   "Aug – Sep 2025",
     location: "Remote · India",
     Icon:     Sparkles,
+    category: "design",
     desc:     "Designed posters, carousels, hackathon logos, headers, and backgrounds for India's boldest youth AI hackathon.",
   },
   {
@@ -54,6 +58,7 @@ const EXPERIENCES = [
     period:   "Sep – Oct 2025",
     location: "Remote · India",
     Icon:     PenTool,
+    category: "design",
     desc:     "Led graphic design, web development, and brand identity. Built platforms with Vite, TypeScript, and Tailwind while developing scalable design systems.",
   },
   {
@@ -64,6 +69,7 @@ const EXPERIENCES = [
     period:   "Mar – Apr 2026",
     location: "Remote · New York, US",
     Icon:     Bot,
+    category: "tech",
     desc:     "Engineered AI automation pipelines and developer tooling to streamline internal workflows and accelerate the team's build velocity.",
   },
 ];
@@ -111,6 +117,7 @@ const PAGE_THEME = {
     accentLine:      "rgba(59,130,246,0.4)",
     statBorder:      "rgba(59,130,246,0.14)",
     connectorBg:     "linear-gradient(to bottom, rgba(59,130,246,0.7), rgba(59,130,246,0.15))",
+    layoutMode:      "tech",
   },
   "fantasy-morning": {
     bgImage:    "/images/fantasyImages/morning/bkg1Morning.png",
@@ -146,6 +153,7 @@ const PAGE_THEME = {
     accentLine:      "rgba(40,130,50,0.4)",
     statBorder:      "rgba(40,130,50,0.16)",
     connectorBg:     "linear-gradient(to bottom, rgba(40,130,50,0.7), rgba(40,130,50,0.15))",
+    layoutMode:      "design",
   },
   "fantasy-night": {
     bgImage:    "/images/fantasyImages/night/bkg1Night.png",
@@ -181,39 +189,9 @@ const PAGE_THEME = {
     accentLine:      "rgba(100,160,240,0.4)",
     statBorder:      "rgba(100,160,240,0.14)",
     connectorBg:     "linear-gradient(to bottom, rgba(100,160,240,0.7), rgba(100,160,240,0.15))",
+    layoutMode:      "design",
   },
 };
-
-// ── Animated wrapper (CSS-only, no framer-motion dep needed here) ─
-function FadeIn({ delay = 0, children, fromY = 20 }) {
-  return (
-    <div
-      style={{
-        animation: `fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) ${delay}s both`,
-      }}
-    >
-      <style>{`
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(${fromY}px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.3); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes growY {
-          from { transform: scaleY(0); }
-          to   { transform: scaleY(1); }
-        }
-        @keyframes slideX {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
-        }
-      `}</style>
-      {children}
-    </div>
-  );
-}
 
 // ── ExperienceCard ────────────────────────────────────────
 function ExperienceCard({ exp, p, side, delay }) {
@@ -333,6 +311,28 @@ function ExperienceCard({ exp, p, side, delay }) {
 export default function ExperiencePage() {
   const { theme } = useTheme();
   const p = PAGE_THEME[theme] ?? PAGE_THEME.tech;
+  const isDesignMode = p.layoutMode === "design";
+
+  // Filter experiences based on mode
+  const filteredExperiences = EXPERIENCES.filter(exp => {
+    if (isDesignMode) {
+      return exp.category === "design";
+    } else {
+      return exp.category === "tech";
+    }
+  });
+
+  // Adjust stats based on filtered experiences
+  const techCount = EXPERIENCES.filter(e => e.category === "tech").length;
+  const designCount = EXPERIENCES.filter(e => e.category === "design").length;
+  const displayedCount = isDesignMode ? designCount : techCount;
+  const companyCount = new Set(filteredExperiences.map(e => e.company)).size;
+
+  const adjustedStats = [
+    { value: "1.5+", label: "Years"     },
+    { value: displayedCount.toString(), label: "Roles"     },
+    { value: companyCount.toString(), label: "Companies" },
+  ];
 
   const SPINE_DELAY  = 0.1;
   const FIRST_ITEM   = 0.28;
@@ -376,6 +376,25 @@ export default function ExperiencePage() {
             animation: `fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0s both`,
           }}
         >
+          <style>{`
+            @keyframes fadeUp {
+              from { opacity: 0; transform: translateY(20px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes scaleIn {
+              from { opacity: 0; transform: scale(0.3); }
+              to   { opacity: 1; transform: scale(1); }
+            }
+            @keyframes growY {
+              from { transform: scaleY(0); }
+              to   { transform: scaleY(1); }
+            }
+            @keyframes slideX {
+              from { transform: scaleX(0); }
+              to   { transform: scaleX(1); }
+            }
+          `}</style>
+
           <div style={{
             display: "flex", alignItems: "flex-end",
             justifyContent: "space-between", flexWrap: "wrap", gap: 20,
@@ -408,7 +427,7 @@ export default function ExperiencePage() {
 
             {/* Stats */}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {STATS.map((s) => (
+              {adjustedStats.map((s) => (
                 <div key={s.label} style={{
                   display: "flex", alignItems: "center", gap: 10,
                   padding: "8px 16px", borderRadius: 999,
@@ -451,149 +470,161 @@ export default function ExperiencePage() {
           }} />
         </div>
 
-        {/* ── Vertical Timeline ── */}
-        <div style={{ position: "relative", maxWidth: 900, margin: "0 auto" }}>
+        {/* ── Timeline ── */}
+        {filteredExperiences.length > 0 ? (
+          <div style={{ position: "relative", maxWidth: 900, margin: "0 auto" }}>
 
-          {/* Spine (vertical line down the center) */}
-          <div style={{
-            position: "absolute",
-            left: "50%",
-            top: 0,
-            bottom: 0,
-            width: 2,
-            marginLeft: -1,
-            overflow: "hidden",
-            zIndex: 0,
-          }}>
+            {/* Spine */}
             <div style={{
-              width: "100%",
-              height: "100%",
-              transformOrigin: "top center",
-              background: p.connectorBg,
-              boxShadow: `0 0 10px ${p.lineGlow}`,
-              animation: `growY 1.4s cubic-bezier(0.22,1,0.36,1) ${SPINE_DELAY}s both`,
-            }} />
-          </div>
+              position: "absolute",
+              left: "50%",
+              top: 0,
+              bottom: 0,
+              width: 2,
+              marginLeft: -1,
+              overflow: "hidden",
+              zIndex: 0,
+            }}>
+              <div style={{
+                width: "100%",
+                height: "100%",
+                transformOrigin: "top center",
+                background: p.connectorBg,
+                boxShadow: `0 0 10px ${p.lineGlow}`,
+                animation: `growY 1.4s cubic-bezier(0.22,1,0.36,1) ${SPINE_DELAY}s both`,
+              }} />
+            </div>
 
-          {/* Items */}
-          {EXPERIENCES.map((exp, i) => {
-            const side  = i % 2 === 0 ? "left" : "right";
-            const delay = FIRST_ITEM + i * ITEM_STAGGER;
-            const { Icon } = exp;
+            {/* Items */}
+            {filteredExperiences.map((exp, i) => {
+              const side  = i % 2 === 0 ? "left" : "right";
+              const delay = FIRST_ITEM + i * ITEM_STAGGER;
+              const { Icon } = exp;
 
-            return (
-              <div
-                key={exp.id}
-                style={{
-                  display:        "flex",
-                  alignItems:     "center",
-                  justifyContent: "center",
-                  marginBottom:   i < EXPERIENCES.length - 1 ? 40 : 0,
-                  position:       "relative",
-                }}
-              >
-                {/* Left card slot */}
-                <div style={{
-                  flex:       1,
-                  paddingRight: 28,
-                  display:    "flex",
-                  justifyContent: "flex-end",
-                }}>
-                  {side === "left" ? (
-                    <div style={{ width: "100%", maxWidth: 340 }}>
-                      <ExperienceCard exp={exp} p={p} side="left" delay={delay} />
-                    </div>
-                  ) : (
-                    /* Period label on the left for right-side cards */
-                    <p style={{
-                      fontFamily:    p.yearFont,
-                      fontSize:      "0.52rem",
-                      letterSpacing: "0.16em",
-                      textTransform: "uppercase",
-                      color:         p.yearColor,
-                      textAlign:     "right",
-                      opacity:       0.8,
-                      lineHeight:    1.5,
-                      animation:     `fadeUp 0.45s ease ${delay + 0.1}s both`,
-                    }}>
-                      {exp.period}
-                    </p>
-                  )}
-                </div>
-
-                {/* Centre node */}
-                <div style={{
-                  position:   "relative",
-                  zIndex:     2,
-                  flexShrink: 0,
-                  display:    "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}>
-                  <div style={{
-                    width:        46,
-                    height:       46,
-                    borderRadius: exp.type === "Contract" ? 12 : "50%",
-                    background:   p.nodeBg,
-                    border:       `2px solid ${p.nodeRing}`,
-                    boxShadow:    `0 0 0 5px ${p.lineGlow}, 0 0 18px ${p.nodeGlow}`,
-                    display:      "flex",
-                    alignItems:   "center",
+              return (
+                <div
+                  key={exp.id}
+                  style={{
+                    display:        "flex",
+                    alignItems:     "center",
                     justifyContent: "center",
-                    animation:    `scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) ${delay}s both`,
+                    marginBottom:   i < filteredExperiences.length - 1 ? 40 : 0,
+                    position:       "relative",
+                  }}
+                >
+                  {/* Left card slot */}
+                  <div style={{
+                    flex:       1,
+                    paddingRight: 28,
+                    display:    "flex",
+                    justifyContent: "flex-end",
                   }}>
-                    <Icon size={18} color={p.iconColor} strokeWidth={1.8} />
+                    {side === "left" ? (
+                      <div style={{ width: "100%", maxWidth: 340 }}>
+                        <ExperienceCard exp={exp} p={p} side="left" delay={delay} />
+                      </div>
+                    ) : (
+                      <p style={{
+                        fontFamily:    p.yearFont,
+                        fontSize:      "0.52rem",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color:         p.yearColor,
+                        textAlign:     "right",
+                        opacity:       0.8,
+                        lineHeight:    1.5,
+                        animation:     `fadeUp 0.45s ease ${delay + 0.1}s both`,
+                      }}>
+                        {exp.period}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Centre node */}
+                  <div style={{
+                    position:   "relative",
+                    zIndex:     2,
+                    flexShrink: 0,
+                    display:    "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}>
+                    <div style={{
+                      width:        46,
+                      height:       46,
+                      borderRadius: exp.type === "Contract" ? 12 : "50%",
+                      background:   p.nodeBg,
+                      border:       `2px solid ${p.nodeRing}`,
+                      boxShadow:    `0 0 0 5px ${p.lineGlow}, 0 0 18px ${p.nodeGlow}`,
+                      display:      "flex",
+                      alignItems:   "center",
+                      justifyContent: "center",
+                      animation:    `scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) ${delay}s both`,
+                    }}>
+                      <Icon size={18} color={p.iconColor} strokeWidth={1.8} />
+                    </div>
+                  </div>
+
+                  {/* Right card slot */}
+                  <div style={{
+                    flex:      1,
+                    paddingLeft: 28,
+                    display:   "flex",
+                    justifyContent: "flex-start",
+                  }}>
+                    {side === "right" ? (
+                      <div style={{ width: "100%", maxWidth: 340 }}>
+                        <ExperienceCard exp={exp} p={p} side="right" delay={delay} />
+                      </div>
+                    ) : (
+                      <p style={{
+                        fontFamily:    p.yearFont,
+                        fontSize:      "0.52rem",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color:         p.yearColor,
+                        textAlign:     "left",
+                        opacity:       0.8,
+                        lineHeight:    1.5,
+                        animation:     `fadeUp 0.45s ease ${delay + 0.1}s both`,
+                      }}>
+                        {exp.period}
+                      </p>
+                    )}
                   </div>
                 </div>
+              );
+            })}
 
-                {/* Right card slot */}
-                <div style={{
-                  flex:      1,
-                  paddingLeft: 28,
-                  display:   "flex",
-                  justifyContent: "flex-start",
-                }}>
-                  {side === "right" ? (
-                    <div style={{ width: "100%", maxWidth: 340 }}>
-                      <ExperienceCard exp={exp} p={p} side="right" delay={delay} />
-                    </div>
-                  ) : (
-                    /* Period label on the right for left-side cards */
-                    <p style={{
-                      fontFamily:    p.yearFont,
-                      fontSize:      "0.52rem",
-                      letterSpacing: "0.16em",
-                      textTransform: "uppercase",
-                      color:         p.yearColor,
-                      textAlign:     "left",
-                      opacity:       0.8,
-                      lineHeight:    1.5,
-                      animation:     `fadeUp 0.45s ease ${delay + 0.1}s both`,
-                    }}>
-                      {exp.period}
-                    </p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-
-          {/* End cap */}
-          <div style={{
-            display: "flex", justifyContent: "center", marginTop: 40,
-            animation: `fadeUp 0.5s ease ${FIRST_ITEM + EXPERIENCES.length * ITEM_STAGGER}s both`,
-          }}>
+            {/* End cap */}
             <div style={{
-              width:        10,
-              height:       10,
-              borderRadius: "50%",
-              background:   p.lineColor,
-              boxShadow:    `0 0 12px ${p.nodeGlow}`,
-              position:     "relative",
-              zIndex:       2,
-            }} />
+              display: "flex", justifyContent: "center", marginTop: 40,
+              animation: `fadeUp 0.5s ease ${FIRST_ITEM + filteredExperiences.length * ITEM_STAGGER}s both`,
+            }}>
+              <div style={{
+                width:        10,
+                height:       10,
+                borderRadius: "50%",
+                background:   p.lineColor,
+                boxShadow:    `0 0 12px ${p.nodeGlow}`,
+                position:     "relative",
+                zIndex:       2,
+              }} />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div style={{
+            textAlign: "center",
+            padding: "80px 0",
+            color: p.subColor,
+            fontFamily: p.monoFont,
+            fontSize: "0.7rem",
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+          }}>
+            No experiences found in this mode.
+          </div>
+        )}
       </div>
     </div>
   );
