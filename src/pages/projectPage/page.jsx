@@ -6,19 +6,27 @@ import TechProjectShowCase from "@/components/projectsComp/TechProjectShowCase";
 
 export default function ProjectsPage() {
   const { theme } = useTheme();
-  
-  // Determine which showcase to display
+
   const isDesignMode = theme.includes("fantasy");
 
   return (
-    <>
+    <div
+      className="min-h-screen w-full"
+      style={{
+        backgroundImage: isDesignMode
+          ? "url('/images/fantasyImages/morning/bkg3Morning.png')"
+          : "url(/images/fantasyImages/night/bkg3Night.png')",
+        backgroundSize: "cover",    
+        backgroundPosition: "center", 
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed" 
+      }}
+    >
       {isDesignMode ? (
-        // Design Mode: Scroll-driven visual portfolio
         <DesignPortfolioShowcase theme={theme} />
       ) : (
-        // Tech Mode: Grid-based project showcase (unchanged)
         <TechProjectShowCase />
       )}
-    </>
+    </div>
   );
 }

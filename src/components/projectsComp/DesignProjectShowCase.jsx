@@ -12,16 +12,17 @@ const DESIGN_PROJECTS = [
     title: "Hack United Media",
     subtitle: "Multimedia Design & Social Content",
     period: "Jul 2025 – Present",
-    accent: "#d946ef",
-    gradient: "linear-gradient(135deg, #6b2c91 0%, #8b3dae 50%, #5a1f78 100%)",
+    accent: "#8b5cf6",
     description: "Creating multimedia content and social media visuals that drive engagement and communicate the Hack United brand across all platforms.",
     tags: ["Multimedia", "Social Media", "Creative Design", "Branding"],
-    bgImage: "/images/projects/hu-bg.jpg", // Optional background image
+    bgImage: "/images/projects/hu-bg.jpg",
     media: [
-      { type: "image", src: "/images/projects/hu-media-1.png", title: "Social Post 1" },
-      { type: "image", src: "/images/projects/hu-media-2.png", title: "Social Post 2" },
+      { type: "image", src: "/images/designProjects/HUPROFPOSTER copy.png", title: "Social Post 1" },
+      { type: "image", src: "/images/designProjects/HUUHV6CAROUSEL.png", title: "Social Post 2" },
       { type: "image", src: "/images/projects/hu-media-3.png", title: "Campaign Visual" },
-      { type: "video", src: "https://www.youtube.com/embed/example", thumbnail: "/images/projects/hu-video.png", title: "Promo Video" },
+      { type: "video", src: "/images/designProjects/HUwrapped_1080x1920.mp4", thumbnail: "/images/fantasyImages/morning/bkg4Morning.png", title: "Promo Video" },
+      { type: "video", src: "/images/designProjects/PROMO VID 2_1080x1920.mp4", thumbnail: "/images/fantasyImages/morning/bkg4Morning.png", title: "Promo Video" },
+      { type: "video", src: "/images/designProjects/V6 normal vid_1080x1920.mp4", thumbnail: "/images/fantasyImages/morning/bkg4Morning.png", title: "Promo Video" }
     ],
     skills: ["Adobe Creative Suite", "Social Media Strategy", "Visual Branding", "Content Creation"],
   },
@@ -30,8 +31,7 @@ const DESIGN_PROJECTS = [
     title: "Maximally.in Design",
     subtitle: "Visual Designer Intern",
     period: "Aug – Sep 2025",
-    accent: "#fb923c",
-    gradient: "linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ea580c 100%)",
+    accent: "#8b5cf6",
     description: "Designed posters, carousels, hackathon logos, headers, and backgrounds for India's boldest youth AI hackathon with a focus on bold visuals and modern aesthetics.",
     tags: ["Graphic Design", "Branding", "Logo Design", "Visual Identity"],
     bgImage: "/images/projects/max-bg.jpg",
@@ -45,12 +45,11 @@ const DESIGN_PROJECTS = [
     skills: ["Logo Design", "Poster Design", "Brand Identity", "Digital Illustration"],
   },
   {
-    id: "max-vd-dev-1",
-    title: "Maximally Design System",
+    id: "freelance-1",
+    title: "Freelance Video & Photo Editing",
     subtitle: "Design & Web Development",
     period: "Sep – Oct 2025",
-    accent: "#60a5fa",
-    gradient: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%)",
+    accent: "#8b5cf6",
     description: "Led comprehensive graphic design and web development initiatives. Built scalable design systems with modern tools while maintaining visual consistency across all touchpoints.",
     tags: ["Design Systems", "Web Design", "UI/UX", "Brand Strategy"],
     bgImage: "/images/projects/design-system-bg.jpg",
@@ -64,46 +63,29 @@ const DESIGN_PROJECTS = [
   },
 ];
 
-// ── Color Theme for Design Mode ────────────────────────────
+// ── Unified Color Theme with Light Text & Glass Effects ────
 const DESIGN_THEME = {
   "fantasy-morning": {
-    backgroundImage: "/images/fantasyImages/morning/bkg2Morning.png",
-
-    cardBg: "rgba(240,255,242,0.88)",
-    cardBorder: "rgba(40,130,50,0.19)",
-    text: "rgba(8,40,15,1)",
-    subText: "rgba(30,70,40,0.82)",
-    labelText: "rgba(20,80,30,0.68)",
-    borderColor: "rgba(40,130,50,0.3)",
-    headingGrad: "linear-gradient(135deg, #0d3318 0%, #1e6b30 55%, #3da856 100%)",
+    // Light color palette for visibility
+    text: "rgba(255, 255, 255, 1)",
+    subText: "rgba(230, 240, 250, 0.95)",
+    labelText: "rgba(210, 230, 255, 0.90)",
+    accentColor: "#8b5cf6",
     fontFamily: "var(--font-cinzel)",
   },
 
   "fantasy-night": {
-    backgroundImage: "/images/fantasyImages/night/bkg1Night.png",
-
-    cardBg: "rgba(8,18,55,0.82)",
-    cardBorder: "rgba(100,160,240,0.17)",
-    text: "#ffffff",
-    subText: "rgba(170,215,255,0.75)",
-    labelText: "rgba(139,196,248,0.62)",
-    borderColor: "rgba(100,160,240,0.3)",
-    headingGrad: "linear-gradient(135deg, #dff0ff 0%, #8bc4f8 55%, #4a8fd4 100%)",
+    // Light color palette for visibility
+    text: "rgba(255, 255, 255, 1)",
+    subText: "rgba(230, 240, 250, 0.95)",
+    labelText: "rgba(210, 230, 255, 0.90)",
+    accentColor: "#8b5cf6",
     fontFamily: "var(--font-cinzel)",
   },
 };
 
-// Helper function to build full background gradient
-const buildBackgroundGradient = (theme) => {
-  return `
-    ${theme.radialBg1},
-    ${theme.radialBg2},
-    ${theme.linearBg}
-  `;
-};
-
 // ── Horizontal Scrolling Media Carousel ────────────────────
-function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
+function MediaCarousel({ mediaItems, accentColor, bgImage }) {
   const scrollRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAutoScroll, setIsAutoScroll] = useState(true);
@@ -127,26 +109,20 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
 
   return (
     <div className="relative w-full">
-      {/* Background image with overlay */}
-      {bgImage && (
-        <div className="absolute inset-0 rounded-2xl overflow-hidden -z-10">
-          <Image
-            src={bgImage}
-            alt="Project background"
-            fill
-            className="object-cover opacity-20"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(135deg, ${projectAccent}30 0%, rgba(0,0,0,0.3) 100%)`,
-            }}
-          />
-        </div>
-      )}
-
-      {/* Carousel Container */}
-      <div className="relative">
+      {/* Carousel Container with Glass Effect */}
+      <div 
+        className="relative rounded-2xl"
+        style={{
+        background:
+          "linear-gradient(135deg, rgba(255, 250, 220, 0.18) 0%, rgba(240, 255, 220, 0.14) 50%, rgba(220, 255, 220, 0.18) 100%)",
+        border: "2px solid rgba(255, 255, 220, 0.25)",
+        backdropFilter: "blur(2px) saturate(180%)",
+        WebkitBackdropFilter: "blur(2px) saturate(180%)",
+        borderRadius: "24px",
+        boxShadow:
+          "0 8px 32px rgba(180, 200, 120, 0.15), inset 0 1px 0 rgba(255,255,255,0.25)",
+      }}
+      >
         <div
           ref={scrollRef}
           className="flex gap-6 overflow-x-auto pb-6 pt-6 px-6 scroll-smooth"
@@ -177,8 +153,11 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
               {item.type === "video" && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <motion.div
-                    className="w-16 h-16 rounded-full flex items-center justify-center"
-                    style={{ background: projectAccent }}
+                    className="w-16 h-16 rounded-full flex items-center justify-center backdrop-blur-md"
+                    style={{
+                      background: "rgba(139, 92, 246, 0.8)",
+                      border: "2px solid rgba(255, 255, 255, 0.3)",
+                    }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -203,7 +182,10 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
               <div className="absolute top-3 right-3">
                 <span
                   className="text-xs px-2 py-1 rounded-full font-mono text-white backdrop-blur-md"
-                  style={{ background: `${projectAccent}90` }}
+                  style={{
+                    background: "rgba(139, 92, 246, 0.6)",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                  }}
                 >
                   {item.type === "video" ? "Video" : "Image"}
                 </span>
@@ -215,22 +197,30 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
         {/* Scroll Controls */}
         <motion.button
           onClick={() => scroll("left")}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full backdrop-blur-md transition-all"
-          style={{ background: `${projectAccent}80` }}
-          whileHover={{ scale: 1.1 }}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full transition-all"
+          style={{
+            background: "rgba(0, 0, 0, 0.5)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            backdropFilter: "blur(10px)",
+          }}
+          whileHover={{ scale: 1.15, background: "rgba(0, 0, 0, 0.7)" }}
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronLeft size={24} className="text-white" />
+          <ChevronLeft size={24} style={{ color: "#ffffff" }} />
         </motion.button>
 
         <motion.button
           onClick={() => scroll("right")}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full backdrop-blur-md transition-all"
-          style={{ background: `${projectAccent}80` }}
-          whileHover={{ scale: 1.1 }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full transition-all"
+          style={{
+            background: "rgba(0, 0, 0, 0.5)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            backdropFilter: "blur(10px)",
+          }}
+          whileHover={{ scale: 1.15, background: "rgba(0, 0, 0, 0.7)" }}
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronRight size={24} className="text-white" />
+          <ChevronRight size={24} style={{ color: "#ffffff" }} />
         </motion.button>
       </div>
 
@@ -238,7 +228,10 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
       <div className="px-6 pb-6 flex justify-between items-center">
         <p
           className="text-xs font-mono tracking-widest uppercase"
-          style={{ color: projectAccent }}
+          style={{
+            color: "#ffffff",
+            textShadow: "0 1px 6px rgba(0, 0, 0, 0.8)",
+          }}
         >
           {mediaItems.length} Items
         </p>
@@ -249,7 +242,8 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
               className="h-1 rounded-full"
               style={{
                 width: i === selectedIndex ? 24 : 8,
-                background: i === selectedIndex ? projectAccent : `${projectAccent}40`,
+                background: i === selectedIndex ? "#8b5cf6" : "rgba(139, 92, 246, 0.4)",
+                boxShadow: i === selectedIndex ? "0 0 8px rgba(139, 92, 246, 0.6)" : "none",
               }}
               animate={{ width: i === selectedIndex ? 24 : 8 }}
             />
@@ -265,14 +259,32 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowLightbox(false)}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 w-full h-full"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255, 252, 220, 0.22) 0%, rgba(240, 255, 220, 0.18) 50%, rgba(220, 255, 220, 0.22) 100%)",
+              backdropFilter: "blur(30px) saturate(220%)",
+              WebkitBackdropFilter: "blur(30px) saturate(220%)",
+              border: "1.5px solid rgba(255, 255, 220, 0.35)",
+              borderRadius: "32px",
+              boxShadow: `
+                0 20px 60px rgba(180, 200, 120, 0.18),
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                inset 0 -1px 0 rgba(220,255,220,0.15)
+              `,
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-4xl w-full aspect-video bg-black rounded-2xl overflow-hidden"
+              className="relative max-w-4xl w-full aspect-video rounded-2xl overflow-hidden"
+              style={{
+                background: "rgba(0, 0, 0, 0.95)",
+                border: "1px solid rgba(139, 92, 246, 0.4)",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.8)",
+              }}
             >
               {mediaItems[selectedIndex].type === "video" ? (
                 <iframe
@@ -293,9 +305,16 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
               {/* Close Button */}
               <button
                 onClick={() => setShowLightbox(false)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md"
+                className="absolute top-4 right-4 p-2 rounded-full transition-all"
+                style={{
+                  background: "rgba(0, 0, 0, 0.6)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  backdropFilter: "blur(10px)",
+                }}
+                onMouseEnter={(e) => e.target.style.background = "rgba(0, 0, 0, 0.8)"}
+                onMouseLeave={(e) => e.target.style.background = "rgba(0, 0, 0, 0.6)"}
               >
-                <X size={24} className="text-white" />
+                <X size={24} style={{ color: "#ffffff" }} />
               </button>
 
               {/* Navigation */}
@@ -307,9 +326,16 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
                         selectedIndex === 0 ? mediaItems.length - 1 : selectedIndex - 1
                       )
                     }
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all"
+                    style={{
+                      background: "rgba(0, 0, 0, 0.6)",
+                      border: "1px solid rgba(255, 255, 255, 0.3)",
+                      backdropFilter: "blur(10px)",
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = "rgba(0, 0, 0, 0.8)"}
+                    onMouseLeave={(e) => e.target.style.background = "rgba(0, 0, 0, 0.6)"}
                   >
-                    <ChevronLeft size={24} className="text-white" />
+                    <ChevronLeft size={24} style={{ color: "#ffffff" }} />
                   </button>
                   <button
                     onClick={() =>
@@ -317,19 +343,26 @@ function MediaCarousel({ mediaItems, projectAccent, bgImage }) {
                         selectedIndex === mediaItems.length - 1 ? 0 : selectedIndex + 1
                       )
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all"
+                    style={{
+                      background: "rgba(0, 0, 0, 0.6)",
+                      border: "1px solid rgba(255, 255, 255, 0.3)",
+                      backdropFilter: "blur(10px)",
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = "rgba(0, 0, 0, 0.8)"}
+                    onMouseLeave={(e) => e.target.style.background = "rgba(0, 0, 0, 0.6)"}
                   >
-                    <ChevronRight size={24} className="text-white" />
+                    <ChevronRight size={24} style={{ color: "#ffffff" }} />
                   </button>
                 </>
               )}
 
               {/* Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
-                <p className="text-white font-semibold">
+              <div className="absolute bottom-0 left-0 right-0 p-6" style={{ background: "linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7), transparent)" }}>
+                <p style={{ color: "#ffffff", textShadow: "0 2px 8px rgba(0, 0, 0, 0.8)" }} className="text-white font-semibold">
                   {mediaItems[selectedIndex].title}
                 </p>
-                <p className="text-white/60 text-sm">
+                <p style={{ color: "#ffffff", textShadow: "0 1px 4px rgba(0, 0, 0, 0.8)" }} className="text-sm">
                   {selectedIndex + 1} / {mediaItems.length}
                 </p>
               </div>
@@ -369,12 +402,9 @@ function DesignProjectCard({ project, theme, index }) {
         {/* Project number */}
         <div className="mb-6">
           <span
-            className="text-6xl font-bold opacity-10"
+            className="text-6xl font-bold opacity-30"
             style={{
-              backgroundImage: theme.headingGrad,
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
+              color: theme.accentColor,
             }}
           >
             {String(index + 1).padStart(2, "0")}
@@ -386,10 +416,8 @@ function DesignProjectCard({ project, theme, index }) {
           className="text-4xl lg:text-5xl font-bold mb-3 leading-tight"
           style={{
             fontFamily: theme.fontFamily,
-            backgroundImage: theme.headingGrad,
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
+            color: "#ffffff",
+            textShadow: "0 3px 15px rgba(0, 0, 0, 0.8), 0 1px 5px rgba(0, 0, 0, 0.6)",
           }}
         >
           {project.title}
@@ -398,7 +426,11 @@ function DesignProjectCard({ project, theme, index }) {
         {/* Subtitle */}
         <p
           className="text-lg mb-4"
-          style={{ color: theme.subText, fontFamily: theme.fontFamily }}
+          style={{ 
+            fontFamily: theme.fontFamily,
+            color: "#ffffff",
+            textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)",
+          }}
         >
           {project.subtitle}
         </p>
@@ -406,7 +438,7 @@ function DesignProjectCard({ project, theme, index }) {
         {/* Divider */}
         <motion.div
           className="w-16 h-1 mb-6 rounded-full"
-          style={{ background: project.accent }}
+          style={{ background: "#8b5cf6" }}
           initial={{ width: 0 }}
           whileInView={{ width: 64 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -415,7 +447,11 @@ function DesignProjectCard({ project, theme, index }) {
         {/* Description */}
         <p
           className="text-sm leading-relaxed mb-8 max-w-xl"
-          style={{ color: theme.subText, fontFamily: "'DM Mono', monospace" }}
+          style={{ 
+            fontFamily: "'DM Mono', monospace",
+            color: "#ffffff",
+            textShadow: "0 2px 8px rgba(0, 0, 0, 0.8)",
+          }}
         >
           {project.description}
         </p>
@@ -423,7 +459,10 @@ function DesignProjectCard({ project, theme, index }) {
         {/* Period */}
         <p
           className="text-xs font-mono tracking-widest uppercase mb-8"
-          style={{ color: theme.labelText, opacity: 0.7 }}
+          style={{
+            color: "#ffffff",
+            textShadow: "0 2px 8px rgba(0, 0, 0, 0.8)",
+          }}
         >
           {project.period}
         </p>
@@ -432,7 +471,10 @@ function DesignProjectCard({ project, theme, index }) {
         <div className="mb-8">
           <p
             className="text-xs font-mono tracking-widest uppercase mb-3"
-            style={{ color: theme.labelText }}
+            style={{
+              color: "#ffffff",
+              textShadow: "0 1px 6px rgba(0, 0, 0, 0.8)",
+            }}
           >
             Skills
           </p>
@@ -442,11 +484,13 @@ function DesignProjectCard({ project, theme, index }) {
                 key={skill}
                 className="text-xs font-mono px-3 py-1.5 rounded-md"
                 style={{
-                  background: `${project.accent}20`,
-                  border: `1px solid ${project.accent}50`,
-                  color: project.accent,
+                  background: "rgba(139, 92, 246, 0.35)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  color: "#ffffff",
+                  backdropFilter: "blur(8px)",
+                  textShadow: "0 1px 4px rgba(0, 0, 0, 0.8)",
                 }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, background: "rgba(139, 92, 246, 0.5)" }}
               >
                 {skill}
               </motion.span>
@@ -459,12 +503,13 @@ function DesignProjectCard({ project, theme, index }) {
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs px-2 py-1 rounded-full"
+              className="text-xs px-2 py-1 rounded-full font-mono"
               style={{
-                background: `${project.accent}15`,
-                border: `1px solid ${project.accent}40`,
-                color: project.accent,
-                fontFamily: "'DM Mono', monospace",
+                background: "rgba(139, 92, 246, 0.3)",
+                border: "1px solid rgba(255, 255, 255, 0.25)",
+                color: "#ffffff",
+                backdropFilter: "blur(8px)",
+                textShadow: "0 1px 4px rgba(0, 0, 0, 0.8)",
               }}
             >
               {tag}
@@ -483,7 +528,7 @@ function DesignProjectCard({ project, theme, index }) {
       >
         <MediaCarousel
           mediaItems={project.media}
-          projectAccent={project.accent}
+          accentColor={theme.accentColor}
           bgImage={project.bgImage}
         />
       </motion.div>
@@ -492,7 +537,10 @@ function DesignProjectCard({ project, theme, index }) {
       <motion.div
         className="mt-24 h-px"
         style={{
-          background: `linear-gradient(90deg, transparent, ${project.accent}40, transparent)`,
+          background:
+          "linear-gradient(90deg, transparent, rgba(220, 255, 180, 0.45) 30%, rgba(255, 245, 180, 0.55) 50%, rgba(220, 255, 180, 0.45) 70%, transparent)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
       />
     </motion.div>
@@ -500,7 +548,7 @@ function DesignProjectCard({ project, theme, index }) {
 }
 
 // ── Hero Section ───────────────────────────────────────────
-function DesignHero({ theme, bgImage }) {
+function DesignHero({ theme }) {
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
   const y = useTransform(scrollY, [0, 300], [0, 100]);
@@ -510,29 +558,13 @@ function DesignHero({ theme, bgImage }) {
       style={{ opacity, y }}
       className="relative h-screen flex flex-col items-center justify-center text-center pointer-events-none overflow-hidden"
     >
-      {/* Background Image with Overlay */}
-      {bgImage && (
-        <div className="absolute inset-0 -z-10">
-          <Image
-            src={bgImage}
-            alt="Hero background"
-            fill
-            className="object-cover opacity-30"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%)",
-            }}
-          />
-        </div>
-      )}
-
       <div className="mb-8">
         <span
           className="text-sm font-mono tracking-widest uppercase"
-          style={{ color: theme.labelText }}
+          style={{
+            color: "#ffffff",
+            textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)",
+          }}
         >
           ✦ Portfolio Showcase ✦
         </span>
@@ -542,10 +574,8 @@ function DesignHero({ theme, bgImage }) {
         className="text-6xl lg:text-8xl font-bold leading-tight mb-6"
         style={{
           fontFamily: theme.fontFamily,
-          backgroundImage: theme.headingGrad,
-          backgroundClip: "text",
-          WebkitBackgroundClip: "text",
-          color: "transparent",
+          color: "#ffffff",
+          textShadow: "0 4px 20px rgba(0, 0, 0, 0.8), 0 2px 10px rgba(0, 0, 0, 0.6)",
         }}
       >
         Design <br /> Works
@@ -553,7 +583,11 @@ function DesignHero({ theme, bgImage }) {
 
       <p
         className="text-lg max-w-md mb-12"
-        style={{ color: theme.subText, fontFamily: "'DM Mono', monospace" }}
+        style={{ 
+          fontFamily: "'DM Mono', monospace",
+          color: "#ffffff",
+          textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)",
+        }}
       >
         Explore my multimedia gallery with images and videos
       </p>
@@ -564,7 +598,7 @@ function DesignHero({ theme, bgImage }) {
         transition={{ duration: 2, repeat: Infinity }}
         className="pointer-events-auto cursor-pointer"
       >
-        <ChevronDown size={24} style={{ color: theme.labelText }} />
+        <ChevronDown size={28} style={{ color: "#ffffff", filter: "drop-shadow(0 2px 10px rgba(0, 0, 0, 0.8))" }} />
       </motion.div>
     </motion.div>
   );
@@ -573,55 +607,47 @@ function DesignHero({ theme, bgImage }) {
 // ── Main Component ─────────────────────────────────────────
 export default function DesignPortfolioShowcase({
   theme = "fantasy-morning",
-  heroBackgroundImage = null,
 }) {
   const themeConfig = DESIGN_THEME[theme] || DESIGN_THEME["fantasy-morning"];
 
   return (
     <div
       className="w-full relative overflow-hidden"
-      style={{ fontFamily: themeConfig.fontFamily, minHeight: "100vh" }}
+      style={{ 
+        fontFamily: themeConfig.fontFamily, 
+        minHeight: "100vh",
+        background:
+          "linear-gradient(180deg, rgba(220, 245, 220, 0.4) 0%, rgba(235, 250, 220, 0.35) 45%, rgba(255, 245, 200, 0.55) 100%)",
+      }}
     >
-      {/* Background */}
-      <div
-        className="fixed inset-0 z-0"
-        style={{
-          backgroundImage: `url(${themeConfig.backgroundImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+      {/* Hero */}
+      <DesignHero theme={themeConfig} />
 
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Hero */}
-        <DesignHero theme={themeConfig} bgImage={heroBackgroundImage} />
-
-        {/* Projects */}
-        <div className="px-6 lg:px-12 py-20">
-          <div className="max-w-6xl mx-auto">
-            {DESIGN_PROJECTS.map((project, idx) => (
-              <DesignProjectCard
-                key={project.id}
-                project={project}
-                theme={themeConfig}
-                index={idx}
-              />
-            ))}
-          </div>
+      {/* Projects */}
+      <div className="px-6 lg:px-12 py-20">
+        <div className="max-w-6xl mx-auto">
+          {DESIGN_PROJECTS.map((project, idx) => (
+            <DesignProjectCard
+              key={project.id}
+              project={project}
+              theme={themeConfig}
+              index={idx}
+            />
+          ))}
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="px-6 lg:px-12 py-20 text-center">
-          <p
-            className="text-sm font-mono tracking-widest uppercase"
-            style={{ color: themeConfig.labelText }}
-          >
-            End of showcase
-          </p>
-        </div>
+      {/* Footer */}
+      <div className="px-6 lg:px-12 py-20 text-center">
+        <p
+          className="text-sm font-mono tracking-widest uppercase"
+          style={{
+            color: "#ffffff",
+            textShadow: "0 2px 8px rgba(0, 0, 0, 0.8)",
+          }}
+        >
+          End of showcase
+        </p>
       </div>
     </div>
   );
