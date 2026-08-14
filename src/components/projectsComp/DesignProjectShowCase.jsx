@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Play, ChevronDown, ChevronRight, ChevronLeft, X, ChevronUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, ChevronDown, ChevronRight, ChevronLeft, X, Calendar, Zap, Menu } from "lucide-react";
 import Image from "next/image";
 
 // ── Design Projects Data ───────────────────────────────────
@@ -46,18 +46,16 @@ const DESIGN_PROJECTS = [
   },
   {
     id: "freelance-1",
-    title: "AI-Generated Media Assets & UGC Content Production",
+    title: "AI-Generated Media Assets & UGC",
     subtitle: "Multi-Platform Generative AI Creation",
     period: "July 2025 - Present",
     accent: "#8b5cf6",
-    description: "Comprehensive generative AI media production portfolio featuring diverse creative assets across multiple platforms. Leveraged advanced AI tools (Hailuo AI) to generate high-quality marketing content, fantasy illustrations, RPG assets, and UGC-style advertisement videos. Produced 40+ professional-grade images and multiple video assets spanning anime illustration, fantasy worldbuilding, medieval game art, pixel art, and direct-response product advertising.",
+    description: "Comprehensive generative AI media production portfolio featuring diverse creative assets. Produced 40+ professional-grade images and multiple video assets spanning anime illustration, fantasy worldbuilding, medieval game art, pixel art, and product advertising.",
     tags: [
       "Generative AI",
       "Video Generation",
       "Image Generation",
       "UGC Content",
-      "AI Prompting",
-      "Content Production",
       "Fantasy Art",
       "Anime Illustration",
       "Product Marketing",
@@ -90,7 +88,6 @@ const DESIGN_PROJECTS = [
         category: "Cinematic"
       },
 
-      // IMAGES
       { type: "image", src: "/images/designProjects/image (1).png", title: "Fantasy-Styled Mechanical Construct", category: "Fantasy Art" },
       { type: "image", src: "/images/designProjects/image (2).png", title: "Highly Detailed Fantasy Ring", category: "Fantasy Props" },
       { type: "image", src: "/images/designProjects/image (3).png", title: "Medieval Fantasy Dialog Box UI", category: "Game UI" },
@@ -154,7 +151,6 @@ const DESIGN_PROJECTS = [
   }
 ];
 
-// ── Theme Configuration ────────────────────────────────────
 const DESIGN_THEME = {
   "fantasy-morning": {
     text: "rgba(30, 35, 50, 1)",
@@ -163,9 +159,11 @@ const DESIGN_THEME = {
     accentColor: "#8b5cf6",
     fontFamily: "var(--font-cinzel)",
     bgGradient: "linear-gradient(180deg, rgba(220, 245, 220, 0.4) 0%, rgba(235, 250, 220, 0.35) 45%, rgba(255, 245, 200, 0.55) 100%)",
-    carouselBg: "rgba(255, 255, 255, 0.7)",
-    carouselBorder: "rgba(139, 92, 246, 0.3)",
+    sidebarBg: "rgba(255, 255, 255, 0.6)",
     cardBg: "rgba(255, 255, 255, 0.5)",
+    cardHover: "rgba(255, 255, 255, 0.7)",
+    detailBg: "rgba(240, 250, 240, 0.8)",
+    border: "rgba(139, 92, 246, 0.2)",
   },
   "fantasy-night": {
     text: "rgba(230, 240, 255, 1)",
@@ -174,9 +172,11 @@ const DESIGN_THEME = {
     accentColor: "#8b5cf6",
     fontFamily: "var(--font-cinzel)",
     bgGradient: "linear-gradient(180deg, rgba(15, 25, 50, 0.9) 0%, rgba(20, 35, 70, 0.85) 45%, rgba(25, 40, 80, 0.9) 100%)",
-    carouselBg: "rgba(20, 35, 70, 0.7)",
-    carouselBorder: "rgba(139, 92, 246, 0.4)",
+    sidebarBg: "rgba(20, 35, 70, 0.6)",
     cardBg: "rgba(30, 50, 100, 0.4)",
+    cardHover: "rgba(40, 70, 130, 0.6)",
+    detailBg: "rgba(15, 30, 60, 0.7)",
+    border: "rgba(139, 92, 246, 0.3)",
   },
   tech: {
     text: "rgba(200, 220, 255, 1)",
@@ -185,639 +185,669 @@ const DESIGN_THEME = {
     accentColor: "#3f8fff",
     fontFamily: "'DM Mono', monospace",
     bgGradient: "linear-gradient(180deg, rgba(10, 20, 50, 0.95) 0%, rgba(15, 30, 70, 0.9) 50%, rgba(10, 25, 60, 0.95) 100%)",
-    carouselBg: "rgba(20, 40, 100, 0.6)",
-    carouselBorder: "rgba(63, 143, 255, 0.3)",
+    sidebarBg: "rgba(20, 40, 100, 0.5)",
     cardBg: "rgba(25, 45, 110, 0.4)",
+    cardHover: "rgba(35, 65, 150, 0.6)",
+    detailBg: "rgba(10, 25, 60, 0.7)",
+    border: "rgba(63, 143, 255, 0.2)",
   },
 };
 
-// ── Video Thumbnail Component ──────────────────────────────
-function VideoThumbnail({ src, title }) {
-  const [isLoaded, setIsLoaded] = useState(false);
+// ── Mobile Project Selector ───────────────────────────────
+function MobileProjectSelector({ projects, selectedIndex, onSelect, theme }) {
+  const themeConfig = DESIGN_THEME[theme];
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
-      {/* Video as thumbnail */}
-      <video
-        src={src}
-        className="w-full h-full object-cover"
-        onLoadedMetadata={() => setIsLoaded(true)}
-        crossOrigin="anonymous"
-      />
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-    </div>
-  );
-}
-
-// ── Category-Based Media Grid ──────────────────────────────
-function CategorizedMediaSection({ mediaItems, accentColor, theme }) {
-  const themeConfig = DESIGN_THEME[theme] || DESIGN_THEME["fantasy-morning"];
-  
-  // Group media by category
-  const groupedMedia = mediaItems.reduce((acc, item) => {
-    const category = item.category || "Other";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(item);
-    return acc;
-  }, {});
-
-  // Define category order and display limits
-  const categoryOrder = [
-    "Product Marketing",
-    "Fantasy Video",
-    "Cinematic",
-    "Fantasy Art",
-    "RPG Assets",
-    "Character Design",
-    "Anime Art",
-    "Pixel Art",
-    "Digital Design"
-  ];
-
-  const sortedCategories = categoryOrder.filter(cat => groupedMedia[cat]);
-
-  return (
-    <div className="space-y-8">
-      {sortedCategories.map((category) => (
-        <CategoryTab
-          key={category}
-          category={category}
-          items={groupedMedia[category]}
-          accentColor={accentColor}
-          theme={theme}
-          themeConfig={themeConfig}
-        />
-      ))}
-    </div>
-  );
-}
-
-// ── Individual Category Tab ────────────────────────────────
-function CategoryTab({ category, items, accentColor, theme, themeConfig }) {
-  const [isExpanded, setIsExpanded] = useState(category === "Product Marketing" || category === "Fantasy Video");
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [showLightbox, setShowLightbox] = useState(false);
-  const scrollRef = useRef(null);
-
-  // Show only 6 items initially, allow expand for more
-  const displayLimit = 6;
-  const isExpandable = items.length > displayLimit;
-  const displayedItems = isExpanded ? items : items.slice(0, displayLimit);
-
-  const scroll = (direction) => {
-    if (scrollRef.current) {
-      const scrollAmount = 400;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const handleMediaClick = (index) => {
-    setSelectedIndex(index);
-    setShowLightbox(true);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: false }}
-      className="space-y-4"
-    >
-      {/* Category Header */}
+    <div className="lg:hidden w-full mb-6 relative z-50">
       <motion.button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 rounded-lg transition-all"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 rounded-lg border"
         style={{
-          background: `${accentColor}22`,
-          border: `1px solid ${accentColor}44`,
-          backdropFilter: "blur(8px)",
-        }}
-        whileHover={{
-          background: `${accentColor}33`,
+          background: themeConfig.detailBg,
+          borderColor: `${projects[selectedIndex].accent}66`,
+          boxShadow: `0 4px 16px ${projects[selectedIndex].accent}22`,
+          backdropFilter: "blur(12px)",
         }}
       >
-        <div className="flex items-center gap-3">
-          <h3
-            className="text-lg font-semibold"
-            style={{ color: themeConfig.text }}
-          >
-            {category}
-          </h3>
-          <span
-            className="text-xs px-2 py-1 rounded-full font-mono"
-            style={{
-              background: `${accentColor}44`,
-              color: themeConfig.text,
-            }}
-          >
-            {items.length}
-          </span>
+        <div className="text-left flex-1 min-w-0">
+          <p className="text-xs font-mono tracking-widest uppercase" style={{ color: themeConfig.labelText }}>
+            Current Project
+          </p>
+          <p className="text-sm font-semibold line-clamp-1 mt-1" style={{ color: themeConfig.text }}>
+            {projects[selectedIndex].title}
+          </p>
         </div>
         <motion.div
-          animate={{ rotate: isExpanded ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="ml-3"
         >
-          <ChevronDown size={20} style={{ color: themeConfig.text }} />
+          <ChevronDown size={20} style={{ color: projects[selectedIndex].accent }} />
         </motion.div>
       </motion.button>
 
-      {/* Media Grid/Carousel */}
+      {/* Dropdown Menu */}
       <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-4"
-          >
-            {/* Carousel for wider screens, Grid for smaller */}
-            <div
-              className="relative rounded-lg overflow-hidden"
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-40"
+            />
+
+            {/* Menu */}
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="absolute left-0 right-0 top-full mt-2 rounded-lg overflow-hidden border z-50"
               style={{
-                background: themeConfig.carouselBg,
-                border: `1px solid ${themeConfig.carouselBorder}`,
+                background: themeConfig.detailBg,
+                borderColor: themeConfig.border,
+                backdropFilter: "blur(12px)",
+                maxHeight: "70vh",
+                overflowY: "auto",
+                boxShadow: `0 12px 32px rgba(0,0,0,0.3)`,
               }}
             >
-              <div
-                ref={scrollRef}
-                className="flex gap-3 pb-4 pt-4 px-4 overflow-x-auto scroll-smooth"
-                style={{ scrollBehavior: "smooth" }}
-              >
-                {displayedItems.map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3, delay: idx * 0.05 }}
-                    className="relative flex-shrink-0 w-60 h-44 rounded-lg overflow-hidden cursor-pointer group shadow-md"
-                    onClick={() => handleMediaClick(idx)}
-                  >
-                    {/* Media Display */}
-                    {item.type === "video" ? (
-                      <VideoThumbnail src={item.src} title={item.title} />
-                    ) : (
-                      <Image
-                        src={item.src}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    )}
-
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
-
-                    {/* Play Button for Videos */}
-                    {item.type === "video" && (
-                      <div className="absolute inset-0 flex items-center justify-center group-hover:opacity-100 transition-opacity">
-                        <motion.div
-                          className="w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-md"
-                          style={{
-                            background: `${accentColor}dd`,
-                            border: "2px solid rgba(255, 255, 255, 0.4)",
-                          }}
-                          whileHover={{ scale: 1.15 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <Play size={18} className="text-white fill-white ml-0.5" />
-                        </motion.div>
-                      </div>
-                    )}
-
-                    {/* Title Badge */}
+              {projects.map((proj, idx) => (
+                <motion.button
+                  key={proj.id}
+                  onClick={() => {
+                    onSelect(idx);
+                    setIsOpen(false);
+                  }}
+                  className="w-full text-left p-4 border-b last:border-b-0 transition-all"
+                  style={{
+                    background: selectedIndex === idx ? `${proj.accent}33` : "transparent",
+                    borderColor: themeConfig.border,
+                  }}
+                  whileHover={{ background: `${proj.accent}22` }}
+                >
+                  <div className="flex items-start gap-3">
                     <div
-                      className="absolute bottom-0 left-0 right-0 p-2"
+                      className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0"
                       style={{
-                        background: "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
+                        background: selectedIndex === idx ? proj.accent : `${proj.accent}66`,
                       }}
-                    >
-                      <p className="text-white text-xs font-semibold truncate line-clamp-2">
-                        {item.title}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold line-clamp-1" style={{ color: themeConfig.text }}>
+                        {proj.title}
+                      </p>
+                      <p className="text-xs line-clamp-1 mt-1" style={{ color: themeConfig.labelText }}>
+                        {proj.subtitle}
                       </p>
                     </div>
-
-                    {/* Type Badge */}
-                    <div className="absolute top-2 right-2">
-                      <span
-                        className="text-xs px-1.5 py-0.5 rounded-full font-mono text-white backdrop-blur-md"
-                        style={{
-                          background: `${accentColor}99`,
-                          border: "1px solid rgba(255, 255, 255, 0.3)",
-                        }}
-                      >
-                        {item.type === "video" ? "▶ Video" : "🖼 Image"}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Scroll Controls */}
-              {displayedItems.length > 3 && (
-                <>
-                  <motion.button
-                    onClick={() => scroll("left")}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-lg"
-                    style={{
-                      background: "rgba(0, 0, 0, 0.5)",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
-                      backdropFilter: "blur(10px)",
-                    }}
-                    whileHover={{ scale: 1.1, background: "rgba(0, 0, 0, 0.7)" }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ChevronLeft size={16} style={{ color: "#ffffff" }} />
-                  </motion.button>
-
-                  <motion.button
-                    onClick={() => scroll("right")}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-lg"
-                    style={{
-                      background: "rgba(0, 0, 0, 0.5)",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
-                      backdropFilter: "blur(10px)",
-                    }}
-                    whileHover={{ scale: 1.1, background: "rgba(0, 0, 0, 0.7)" }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ChevronRight size={16} style={{ color: "#ffffff" }} />
-                  </motion.button>
-                </>
-              )}
-            </div>
-
-            {/* Expand/Collapse Info */}
-            {isExpandable && displayedItems.length === displayLimit && (
-              <motion.button
-                onClick={() => setIsExpanded(true)}
-                className="w-full py-2 text-sm font-mono text-center transition-all"
-                style={{
-                  color: accentColor,
-                  borderTop: `1px solid ${accentColor}44`,
-                }}
-                whileHover={{ scale: 1.02 }}
-              >
-                Show all {items.length} items →
-              </motion.button>
-            )}
-
-            {/* Counter */}
-            <div className="px-2 py-2 flex justify-between items-center text-xs font-mono">
-              <span style={{ color: themeConfig.labelText }}>
-                {displayedItems.length} / {items.length}
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {showLightbox && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowLightbox(false)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-w-4xl w-full aspect-video rounded-xl overflow-hidden"
-              style={{
-                background: "rgba(0, 0, 0, 0.97)",
-                border: `2px solid ${accentColor}66`,
-              }}
-            >
-              {displayedItems[selectedIndex].type === "video" ? (
-                <video
-                  src={displayedItems[selectedIndex].src}
-                  autoPlay
-                  controls
-                  className="w-full h-full"
-                />
-              ) : (
-                <Image
-                  src={displayedItems[selectedIndex].src}
-                  alt={displayedItems[selectedIndex].title}
-                  fill
-                  className="object-contain"
-                />
-              )}
-
-              {/* Close Button */}
-              <button
-                onClick={() => setShowLightbox(false)}
-                className="absolute top-4 right-4 p-2 rounded-lg transition-all"
-                style={{
-                  background: "rgba(0, 0, 0, 0.6)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                }}
-              >
-                <X size={20} style={{ color: "#ffffff" }} />
-              </button>
-
-              {/* Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-4" style={{ background: "linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.5), transparent)" }}>
-                <p style={{ color: "#ffffff" }} className="text-sm font-semibold mb-1">
-                  {displayedItems[selectedIndex].title}
-                </p>
-                <p style={{ color: "#ffffff", opacity: 0.7 }} className="text-xs">
-                  {selectedIndex + 1} / {displayedItems.length}
-                </p>
-              </div>
+                    <span
+                      className="text-xs px-2.5 py-1 rounded-full font-mono whitespace-nowrap flex-shrink-0 mt-0.5"
+                      style={{
+                        background: `${proj.accent}44`,
+                        color: proj.accent,
+                      }}
+                    >
+                      {proj.media.length}
+                    </span>
+                  </div>
+                </motion.button>
+              ))}
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
-// ── Project Card with Categorized Media ───────────────────
-function DesignProjectCard({ project, theme, index }) {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+// ── Media Item Component ────────────────────────────────────
+function MediaItem({ item, accent, onSelect }) {
+  const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [100, 0, -100]);
+  return (
+    <motion.button
+      onClick={() => onSelect(item)}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.98 }}
+      style={{
+        all: "unset",
+        cursor: "pointer",
+      }}
+      className="relative rounded-lg overflow-hidden group w-full"
+    >
+      <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-black/20 to-black/40">
+        {item.type === "video" ? (
+          <>
+            <video
+              src={item.src}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+              crossOrigin="anonymous"
+              muted
+            />
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div
+                className="w-8 h-8 rounded-full flex items-center justify-center"
+                style={{
+                  background: `${accent}dd`,
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
+                }}
+                whileHover={{ scale: 1.2 }}
+              >
+                <Play size={14} className="text-white fill-white ml-0.5" />
+              </motion.div>
+            </div>
+          </>
+        ) : !imgError ? (
+          <>
+            {/* Loading skeleton */}
+            {!imgLoaded && (
+              <div
+                className="absolute inset-0 animate-pulse"
+                style={{ background: `${accent}11` }}
+              />
+            )}
+            {/* Regular img tag for better compatibility */}
+            <img
+              src={item.src}
+              alt={item.title}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => {
+                setImgError(true);
+                setImgLoaded(false);
+              }}
+              className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 ${
+                !imgLoaded ? "opacity-0" : "opacity-100"
+              }`}
+              crossOrigin="anonymous"
+              loading="lazy"
+            />
+          </>
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center" style={{ background: `${accent}22` }}>
+            <span className="text-xs text-center px-2" style={{ color: accent }}>
+              Image unavailable
+            </span>
+          </div>
+        )}
+      </div>
+    </motion.button>
+  );
+}
 
-  const themeConfig = DESIGN_THEME[theme] || DESIGN_THEME["fantasy-morning"];
+// ── Media Lightbox ─────────────────────────────────────────
+function MediaLightbox({ media, accent, onClose }) {
+  const [index, setIndex] = useState(0);
+
+  const currentItem = media[index];
 
   return (
     <motion.div
-      ref={containerRef}
-      style={{ opacity, y }}
-      className="relative w-full mb-32"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 lg:p-4 backdrop-blur-sm"
+      style={{ background: "rgba(0, 0, 0, 0.8)" }}
     >
-      {/* Content Section */}
       <motion.div
-        initial={{ opacity: 0, x: -40 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: false, margin: "-100px" }}
-        className="mb-12"
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-4xl"
+        style={{ aspectRatio: "16/10", maxHeight: "90vh" }}
       >
-        {/* Project number */}
-        <div className="mb-6">
-          <span
-            className="text-5xl lg:text-6xl font-bold opacity-20"
-            style={{
-              color: themeConfig.accentColor,
-            }}
-          >
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h2
-          className="text-3xl lg:text-4xl font-bold mb-3 leading-tight"
-          style={{
-            fontFamily: themeConfig.fontFamily,
-            color: themeConfig.text,
-          }}
-        >
-          {project.title}
-        </h2>
-
-        {/* Subtitle */}
-        <p
-          className="text-base mb-4"
-          style={{ 
-            fontFamily: themeConfig.fontFamily,
-            color: themeConfig.subText,
-          }}
-        >
-          {project.subtitle}
-        </p>
-
-        {/* Divider */}
-        <motion.div
-          className="w-16 h-1 mb-6 rounded-full"
-          style={{ background: themeConfig.accentColor }}
-          initial={{ width: 0 }}
-          whileInView={{ width: 64 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        />
-
-        {/* Description */}
-        <p
-          className="text-sm leading-relaxed mb-8 max-w-xl"
-          style={{ 
-            fontFamily: "'DM Mono', monospace",
-            color: themeConfig.subText,
-          }}
-        >
-          {project.description}
-        </p>
-
-        {/* Period */}
-        <p
-          className="text-xs font-mono tracking-widest uppercase mb-8"
-          style={{
-            color: themeConfig.labelText,
-          }}
-        >
-          {project.period}
-        </p>
-
-        {/* Skills */}
-        <div className="mb-8">
-          <p
-            className="text-xs font-mono tracking-widest uppercase mb-3"
-            style={{
-              color: themeConfig.labelText,
-            }}
-          >
-            Skills
-          </p>
-          <div className="flex flex-wrap gap-2 mb-8">
-            {project.skills.map((skill) => (
-              <motion.span
-                key={skill}
-                className="text-xs font-mono px-3 py-1.5 rounded-md"
-                style={{
-                  background: `${themeConfig.accentColor}33`,
-                  border: `1px solid ${themeConfig.accentColor}66`,
-                  color: themeConfig.text,
-                  backdropFilter: "blur(8px)",
-                }}
-                whileHover={{ scale: 1.05, background: `${themeConfig.accentColor}55` }}
-              >
-                {skill}
-              </motion.span>
-            ))}
-          </div>
-        </div>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs px-2 py-1 rounded-full font-mono"
-              style={{
-                background: `${themeConfig.accentColor}22`,
-                border: `1px solid ${themeConfig.accentColor}44`,
-                color: themeConfig.text,
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Categorized Media Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        viewport={{ once: false, margin: "-100px" }}
-        className="mb-16"
-      >
-        {project.media && project.media.length > 0 && project.media[0].category ? (
-          <CategorizedMediaSection
-            mediaItems={project.media}
-            accentColor={themeConfig.accentColor}
-            theme={theme}
+        {/* Media */}
+        {currentItem.type === "video" ? (
+          <video
+            src={currentItem.src}
+            autoPlay
+            controls
+            className="w-full h-full rounded-lg lg:rounded-xl object-contain"
           />
         ) : (
-          // Fallback for projects without categories
-          <div>
-            <p style={{ color: themeConfig.labelText }} className="text-sm">
-              {project.media?.length} media items
-            </p>
-          </div>
+          <Image
+            src={currentItem.src}
+            alt={currentItem.title}
+            fill
+            className="object-contain rounded-lg lg:rounded-xl"
+          />
+        )}
+
+        {/* Close */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onClose}
+          className="absolute -top-10 lg:-top-12 right-0 p-1.5 lg:p-2"
+          style={{ color: "#ffffff" }}
+        >
+          <X size={20} className="lg:w-6 lg:h-6" />
+        </motion.button>
+
+        {/* Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 lg:p-4 rounded-b-lg lg:rounded-b-xl" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.4), transparent)" }}>
+          <p style={{ color: "#ffffff" }} className="text-xs lg:text-sm font-semibold mb-1 line-clamp-2">
+            {currentItem.title}
+          </p>
+          <p style={{ color: "rgba(255, 255, 255, 0.7)" }} className="text-xs">
+            {index + 1} / {media.length}
+          </p>
+        </div>
+
+        {/* Navigation */}
+        {media.length > 1 && (
+          <>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIndex((i) => (i - 1 + media.length) % media.length)}
+              className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 p-1.5 lg:p-2 rounded-lg"
+              style={{ background: "rgba(0, 0, 0, 0.6)", border: "1px solid rgba(255, 255, 255, 0.2)" }}
+            >
+              <ChevronLeft size={18} className="lg:w-5 lg:h-5" style={{ color: "#ffffff" }} />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIndex((i) => (i + 1) % media.length)}
+              className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 p-1.5 lg:p-2 rounded-lg"
+              style={{ background: "rgba(0, 0, 0, 0.6)", border: "1px solid rgba(255, 255, 255, 0.2)" }}
+            >
+              <ChevronRight size={18} className="lg:w-5 lg:h-5" style={{ color: "#ffffff" }} />
+            </motion.button>
+          </>
         )}
       </motion.div>
-
-      {/* Divider */}
-      <motion.div
-        className="mt-24 h-px"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${themeConfig.accentColor}44 30%, ${themeConfig.accentColor}66 50%, ${themeConfig.accentColor}44 70%, transparent)`,
-          backdropFilter: "blur(12px)",
-        }}
-      />
     </motion.div>
   );
 }
 
-// ── Hero Section ───────────────────────────────────────────
-function DesignHero({ theme }) {
-  const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const y = useTransform(scrollY, [0, 300], [0, 100]);
-
-  const themeConfig = DESIGN_THEME[theme] || DESIGN_THEME["fantasy-morning"];
+// ── Project Selector Card ──────────────────────────────────
+function ProjectCard({ project, isSelected, onClick, theme }) {
+  const themeConfig = DESIGN_THEME[theme];
 
   return (
-    <motion.div
-      style={{ opacity, y }}
-      className="relative h-screen flex flex-col items-center justify-center text-center pointer-events-none overflow-hidden"
+    <motion.button
+      onClick={onClick}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      style={{
+        all: "unset",
+        cursor: "pointer",
+      }}
+      className="w-full lg:w-auto text-left flex-shrink-0 lg:flex-shrink"
     >
-      <div className="mb-8">
-        <span
-          className="text-sm font-mono tracking-widest uppercase"
+      <div
+        className="relative p-3 lg:p-4 rounded-lg transition-all duration-300 border min-w-max lg:min-w-0"
+        style={{
+          background: isSelected ? themeConfig.cardHover : themeConfig.cardBg,
+          borderColor: isSelected ? `${project.accent}66` : themeConfig.border,
+          boxShadow: isSelected ? `0 8px 24px ${project.accent}22` : "none",
+        }}
+      >
+        {/* Accent line */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
           style={{
-            color: themeConfig.text,
+            background: project.accent,
+            opacity: isSelected ? 1 : 0.3,
           }}
-        >
-          ✦ Portfolio Showcase ✦
-        </span>
+        />
+
+        <div className="pl-2 lg:pl-3">
+          <h3
+            className="font-semibold text-xs lg:text-sm mb-1 line-clamp-1"
+            style={{ color: themeConfig.text }}
+          >
+            {project.title}
+          </h3>
+          <p
+            className="text-xs line-clamp-1"
+            style={{ color: themeConfig.labelText }}
+          >
+            {project.subtitle}
+          </p>
+
+          {/* Media count */}
+          <div className="flex items-center gap-2 mt-2">
+            <span
+              className="text-xs px-2 py-1 rounded-full font-mono whitespace-nowrap"
+              style={{
+                background: `${project.accent}22`,
+                color: project.accent,
+              }}
+            >
+              {project.media.length} assets
+            </span>
+          </div>
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+// ── Pagination Component ──────────────────────────────────
+function MediaPagination({ currentPage, totalPages, onPageChange, accent }) {
+  return (
+    <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: `${accent}22` }}>
+      <motion.button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 0}
+        whileHover={{ scale: currentPage === 0 ? 1 : 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg disabled:opacity-40"
+        style={{
+          background: `${accent}22`,
+          border: `1px solid ${accent}44`,
+          cursor: currentPage === 0 ? "not-allowed" : "pointer",
+        }}
+      >
+        <ChevronLeft size={16} style={{ color: accent }} />
+        <span className="text-sm font-mono" style={{ color: accent }}>Prev</span>
+      </motion.button>
+
+      <div className="flex items-center gap-2">
+        {Array.from({ length: totalPages }).map((_, idx) => (
+          <motion.button
+            key={idx}
+            onClick={() => onPageChange(idx)}
+            className="w-2 h-2 rounded-full transition-all"
+            style={{
+              background: idx === currentPage ? accent : `${accent}44`,
+            }}
+            whileHover={{ scale: 1.3 }}
+          />
+        ))}
       </div>
 
-      <h1
-        className="text-6xl lg:text-7xl font-bold leading-tight mb-6"
+      <motion.button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages - 1}
+        whileHover={{ scale: currentPage === totalPages - 1 ? 1 : 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg disabled:opacity-40"
         style={{
-          fontFamily: themeConfig.fontFamily,
-          color: themeConfig.text,
+          background: `${accent}22`,
+          border: `1px solid ${accent}44`,
+          cursor: currentPage === totalPages - 1 ? "not-allowed" : "pointer",
         }}
       >
-        Design <br /> Works
-      </h1>
-
-      <p
-        className="text-base max-w-md mb-12"
-        style={{ 
-          fontFamily: "'DM Mono', monospace",
-          color: themeConfig.subText,
-        }}
-      >
-        Explore my portfolio organized by project and media type
-      </p>
-
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="pointer-events-auto cursor-pointer"
-      >
-        <ChevronDown size={28} style={{ color: themeConfig.text }} />
-      </motion.div>
-    </motion.div>
+        <span className="text-sm font-mono" style={{ color: accent }}>Next</span>
+        <ChevronRight size={16} style={{ color: accent }} />
+      </motion.button>
+    </div>
   );
 }
 
 // ── Main Component ─────────────────────────────────────────
-export default function DesignPortfolioShowcase({
-  theme = "fantasy-morning",
-}) {
-  const themeConfig = DESIGN_THEME[theme] || DESIGN_THEME["fantasy-morning"];
+export default function DesignPortfolioRedesigned({ theme = "fantasy-morning" }) {
+  const themeConfig = DESIGN_THEME[theme];
+  const [selectedProject, setSelectedProject] = useState(0);
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [mediaPage, setMediaPage] = useState(0);
+
+  const project = DESIGN_PROJECTS[selectedProject];
+  
+  // Pagination logic: 2 rows per page (4 cols = 2x2 on desktop, 2 cols on mobile = 2x1)
+  const itemsPerPage = 8; // 2 rows × 4 columns on desktop
+  const totalPages = Math.ceil(project.media.length / itemsPerPage);
+  const startIdx = mediaPage * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const paginatedMedia = project.media.slice(startIdx, endIdx);
 
   return (
     <div
-      className="w-full relative overflow-hidden"
-      style={{ 
-        fontFamily: themeConfig.fontFamily, 
-        minHeight: "100vh",
+      style={{
         background: themeConfig.bgGradient,
+        color: themeConfig.text,
+        fontFamily: themeConfig.fontFamily,
+        minHeight: "100vh",
       }}
+      className="relative overflow-hidden"
     >
-      {/* Hero */}
-      <DesignHero theme={theme} />
+      <style>{`
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+        .fade-in { animation: fadeUp 0.6s ease both; }
+      `}</style>
 
-      {/* Projects */}
-      <div className="px-6 lg:px-12 py-20">
-        <div className="max-w-6xl mx-auto">
-          {DESIGN_PROJECTS.map((project, idx) => (
-            <DesignProjectCard
-              key={project.id}
-              project={project}
-              theme={theme}
-              index={idx}
-            />
-          ))}
+      {/* Header */}
+      <div className="sticky top-0 z-40 backdrop-blur-sm" style={{ borderBottom: `1px solid ${themeConfig.border}` }}>
+        <div className="px-4 lg:px-6 py-4 lg:py-6">
+          <div className="mb-2 lg:mb-4">
+            <p className="text-xs font-mono tracking-widest uppercase" style={{ color: themeConfig.labelText }}>
+              ✦ Design Portfolio ✦
+            </p>
+          </div>
+          <h1
+            className="text-2xl lg:text-4xl font-bold"
+            style={{ fontFamily: themeConfig.fontFamily }}
+          >
+            Design Works
+          </h1>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="px-6 lg:px-12 py-20 text-center">
-        <p
-          className="text-sm font-mono tracking-widest uppercase"
-          style={{
-            color: themeConfig.labelText,
-          }}
-        >
-          End of showcase
-        </p>
+      {/* Content */}
+      <div className="px-4 lg:px-6 py-8 lg:py-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Mobile Project Selector - Top Nav */}
+          <div className="lg:hidden mb-6">
+            <MobileProjectSelector
+              projects={DESIGN_PROJECTS}
+              selectedIndex={selectedProject}
+              onSelect={(idx) => {
+                setSelectedProject(idx);
+                setSelectedMedia(null);
+                setMediaPage(0);
+              }}
+              theme={theme}
+            />
+          </div>
+
+          {/* Main Grid: Desktop has sidebar, mobile is single column */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+            {/* Desktop Sidebar - Project List */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="hidden lg:block lg:col-span-1 h-fit lg:sticky lg:top-28"
+            >
+              <p className="text-xs font-mono tracking-widest uppercase mb-3 lg:mb-4" style={{ color: themeConfig.labelText }}>
+                Projects ({DESIGN_PROJECTS.length})
+              </p>
+              
+              <div className="lg:space-y-3 flex lg:flex-col gap-3 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
+                {DESIGN_PROJECTS.map((proj, idx) => (
+                  <div key={proj.id} className="flex-shrink-0 w-full lg:flex-shrink">
+                    <ProjectCard
+                      project={proj}
+                      isSelected={selectedProject === idx}
+                      onClick={() => {
+                        setSelectedProject(idx);
+                        setSelectedMedia(null);
+                        setMediaPage(0);
+                      }}
+                      theme={theme}
+                    />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Main Content - Project Details & Media */}
+            <motion.div
+              key={selectedProject}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="col-span-1 lg:col-span-3 space-y-6 lg:space-y-8"
+            >
+            {/* Project Header */}
+            <div>
+              <div className="mb-4 lg:mb-6">
+                <span
+                  className="text-3xl lg:text-5xl font-bold opacity-20"
+                  style={{ color: project.accent }}
+                >
+                  {String(selectedProject + 1).padStart(2, "0")}
+                </span>
+              </div>
+
+              <h2
+                className="text-2xl lg:text-3xl font-bold mb-2"
+                style={{ fontFamily: themeConfig.fontFamily }}
+              >
+                {project.title}
+              </h2>
+
+              <p className="text-sm lg:text-base mb-3 lg:mb-4" style={{ color: themeConfig.subText }}>
+                {project.subtitle}
+              </p>
+
+              <motion.div
+                className="w-10 lg:w-12 h-1 mb-4 lg:mb-6 rounded-full"
+                style={{ background: project.accent }}
+                initial={{ width: 0 }}
+                animate={{ width: "auto" }}
+                transition={{ duration: 0.6 }}
+              />
+
+              <p className="text-xs lg:text-sm leading-relaxed mb-4 lg:mb-6" style={{ color: themeConfig.subText }}>
+                {project.description}
+              </p>
+
+              {/* Meta Info */}
+              <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-6 lg:mb-8">
+                <div>
+                  <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: themeConfig.labelText }}>
+                    Period
+                  </p>
+                  <p className="text-xs lg:text-sm flex items-center gap-2" style={{ color: themeConfig.text }}>
+                    <Calendar size={14} style={{ color: project.accent }} />
+                    <span className="line-clamp-2">{project.period}</span>
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-mono tracking-widest uppercase mb-2" style={{ color: themeConfig.labelText }}>
+                    Assets
+                  </p>
+                  <p className="text-xs lg:text-sm flex items-center gap-2" style={{ color: themeConfig.text }}>
+                    <Zap size={14} style={{ color: project.accent }} />
+                    {project.media.length} items
+                  </p>
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-6 lg:mb-8">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 lg:px-3 py-1 rounded-full font-mono"
+                    style={{
+                      background: `${project.accent}22`,
+                      border: `1px solid ${project.accent}44`,
+                      color: themeConfig.text,
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Skills */}
+              <div>
+                <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: themeConfig.labelText }}>
+                  Skills Used
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {project.skills.map((skill) => (
+                    <motion.span
+                      key={skill}
+                      className="text-xs font-mono px-2 lg:px-3 py-1 lg:py-1.5 rounded-md"
+                      style={{
+                        background: `${project.accent}33`,
+                        border: `1px solid ${project.accent}66`,
+                        color: themeConfig.text,
+                      }}
+                      whileHover={{ scale: 1.05, background: `${project.accent}55` }}
+                    >
+                      {skill}
+                    </motion.span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div style={{ height: "1px", background: `linear-gradient(90deg, ${project.accent}00, ${project.accent}66, ${project.accent}00)` }} />
+
+            {/* Media Showcase */}
+            <div>
+              <div className="flex items-center justify-between mb-4 lg:mb-6">
+                <p className="text-xs font-mono tracking-widest uppercase" style={{ color: themeConfig.labelText }}>
+                  Media Gallery
+                </p>
+                <span className="text-xs font-mono px-2 py-1 rounded" style={{ background: `${project.accent}22`, color: project.accent }}>
+                  {startIdx + 1}–{Math.min(endIdx, project.media.length)} of {project.media.length}
+                </span>
+              </div>
+
+              {/* Responsive Grid: 2 cols on mobile, 4 on desktop = 2 rows display */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-4">
+                {paginatedMedia.map((item, idx) => (
+                  <motion.div
+                    key={startIdx + idx}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: idx * 0.03 }}
+                  >
+                    <MediaItem
+                      item={item}
+                      accent={project.accent}
+                      onSelect={() => {
+                        setSelectedMedia(startIdx + idx);
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <MediaPagination
+                  currentPage={mediaPage}
+                  totalPages={totalPages}
+                  onPageChange={setMediaPage}
+                  accent={project.accent}
+                />
+              )}
+            </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {selectedMedia !== null && (
+          <MediaLightbox
+            media={project.media}
+            accent={project.accent}
+            onClose={() => setSelectedMedia(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
