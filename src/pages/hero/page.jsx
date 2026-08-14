@@ -4,8 +4,8 @@ import HeroCarousel from "@/components/heroComp/heroCarousel";
 import ClockStatus from "@/components/heroComp/clockStatus";
 import { useTheme } from "@/app/themeProvider";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Code2, Computer, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Code2, Computer } from "lucide-react";
 
 // ── Animation helpers ─────────────────────────────────────
 const fadeUp = (delay = 0, x = 0) => ({
@@ -20,7 +20,6 @@ const floatIn = (delay = 0) => ({
   transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
 });
 
-// ── SVG Social Icons ──────────────────────────────────────
 const GithubIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
@@ -29,11 +28,6 @@ const GithubIcon = () => (
 const LinkedinIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-  </svg>
-);
-const TwitterIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
   </svg>
 );
 const MailIcon = () => (
@@ -50,7 +44,6 @@ const SOCIAL_LINKS = [
   { Icon: MailIcon,     href: "jamesavila540@gmail.com",            label: "Email"    },
   { Icon: Computer,     href: "https://huggingface.co/YureiYuri",            label: "HuggingFace"    },
 ];
-
 // ── Per-theme config ──────────────────────────────────────
 const THEME_CONFIG = {
   tech: {
@@ -218,7 +211,7 @@ const THEME_CONFIG = {
   },
 };
 
-// ── Scroll Indicator ──────────────────────────────────────
+// ── ScrollIndicator ──────────────────────────────────────
 function ScrollIndicator({ color }) {
   return (
     <motion.div
@@ -247,6 +240,7 @@ function CurrentlyWorking({ cfg }) {
         border:        `1px solid ${cfg.currentWorkBorder}`,
         backdropFilter:"blur(10px)",
         width:         "fit-content",
+        fontSize:      "clamp(0.56rem, 2vw, 0.63rem)",
       }}
     >
       <motion.div
@@ -261,7 +255,6 @@ function CurrentlyWorking({ cfg }) {
       />
       <span style={{
         fontFamily:    "'DM Mono', monospace",
-        fontSize:      "0.63rem",
         letterSpacing: "0.1em",
         color:         cfg.currentWorkColor,
         textTransform: "uppercase",
@@ -280,7 +273,7 @@ function SocialLinks({ cfg, isDesign }) {
   return (
     <motion.div
       {...fadeUp(0.95)}
-      style={{ display: "flex", alignItems: "center", gap: isDesign ? 8 : 4 }}
+      style={{ display: "flex", alignItems: "center", gap: isDesign ? 8 : 4, flexWrap: "wrap" }}
     >
       {SOCIAL_LINKS.map(({ Icon, href, label }, i) => (
         <motion.a
@@ -306,28 +299,47 @@ function SocialLinks({ cfg, isDesign }) {
             textDecoration:  "none",
             transition:      "color 0.22s, background 0.22s, border-color 0.22s",
             cursor:          "pointer",
+            minWidth: "34px",
           }}
         >
-          <Icon />
+          {typeof Icon === 'function' ? <Icon /> : <Icon size={isDesign ? 18 : 15} strokeWidth={1.8} />}
         </motion.a>
       ))}
 
-      {/* Divider */}
+      {/* Divider — hide on mobile */}
       <div style={{
         width:      1,
         height:     16,
         background: cfg.borderColor,
         margin:     isDesign ? "0 10px" : "0 6px",
         opacity:    0.4,
+        display:    "none",
+        "@media (min-width: 768px)": {
+          display: "block",
+        },
       }} />
 
-      <ScrollIndicator color={cfg.scrollColor} />
+      {/* ScrollIndicator — hide on mobile */}
+      <div style={{ display: "none", "@media (min-width: 768px)": { display: "flex" } }}>
+        <ScrollIndicator color={cfg.scrollColor} />
+      </div>
     </motion.div>
   );
 }
 
 // ── Decorative accent ─────────────────────────────────────
 function DecorativeAccent({ theme, cfg }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  if (isMobile) return null; // Don't render on mobile to reduce visual clutter
+
   if (theme === "tech") {
     return (
       <motion.div
@@ -368,413 +380,23 @@ function DecorativeAccent({ theme, cfg }) {
   );
 }
 
-// ── TECH MODE LAYOUT ──────────────────────────────────────
-function TechLayout({ cfg, nameHovered, portfolioHovered, yureiHovered, setNameHovered, setPortfolioHovered, setYureiHovered }) {
-  return (
-    <div
-      style={{
-        display:        "flex",
-        flexDirection:  "column",
-        justifyContent: "space-between",
-        paddingRight:   40,
-        paddingBottom:  32,
-      }}
-    >
-      {/* TOP */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <motion.div
-          {...fadeUp(0.1)}
-          onMouseEnter={() => setNameHovered(true)}
-          onMouseLeave={() => setNameHovered(false)}
-          style={{
-            display:       "inline-flex",
-            flexDirection: "column",
-            gap:           4,
-            cursor:        "default",
-            alignSelf:     "flex-start",
-          }}
-        >
-          <motion.span
-            animate={{
-              color:      nameHovered ? cfg.nameHoverColor : cfg.nameColor,
-              textShadow: nameHovered ? cfg.nameHoverShadow : "0 0 0px transparent",
-            }}
-            transition={{ duration: 0.3 }}
-            style={{ fontSize: "1.25rem", fontWeight: 600, letterSpacing: "0.01em" }}
-          >
-            James Yuri R. Avila
-          </motion.span>
-
-          <motion.div
-            animate={{ borderLeftColor: nameHovered ? cfg.borderHoverColor : cfg.borderColor }}
-            transition={{ duration: 0.3 }}
-            style={{
-              marginTop:     4,
-              display:       "flex",
-              flexDirection: "column",
-              gap:           2,
-              paddingLeft:   14,
-              borderLeft:    `2px solid ${cfg.borderColor}`,
-            }}
-          >
-            {cfg.titleTags.map((t, i) => (
-              <span
-                key={i}
-                style={{
-                  color:         nameHovered ? cfg.titleHoverColor : cfg.titleColor,
-                  fontSize:      "0.72rem",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  fontFamily:    "'DM Mono', monospace",
-                  transition:    "color 0.3s",
-                }}
-              >
-                {t}
-              </span>
-            ))}
-          </motion.div>
-
-          <div style={{ marginTop: 10 }}>
-            <ClockStatus />
-          </div>
-        </motion.div>
-
-        <CurrentlyWorking cfg={cfg} />
-      </div>
-
-      {/* SPACER */}
-      <div style={{ flex: 1 }} />
-
-      {/* BOTTOM */}
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <motion.h1
-          initial={{ opacity: 0, x: -60 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          onMouseEnter={() => setPortfolioHovered(true)}
-          onMouseLeave={() => setPortfolioHovered(false)}
-          style={{
-            fontSize:             "clamp(3.5rem, 8vw, 6.5rem)",
-            fontWeight:           700,
-            lineHeight:           0.92,
-            letterSpacing:        "-0.025em",
-            color:                "transparent",
-            backgroundClip:       "text",
-            WebkitBackgroundClip: "text",
-            backgroundImage:      portfolioHovered ? cfg.headingHoverGradient : cfg.headingGradient,
-            marginBottom:         "0.7rem",
-            cursor:               "default",
-            filter:               portfolioHovered ? cfg.headingHoverShadow : "none",
-            transition:           "filter 0.4s, background-image 0.5s",
-          }}
-        >
-          {cfg.headingLine1}
-          <br />
-          {cfg.headingLine2}
-        </motion.h1>
-
-        <motion.p
-          {...fadeUp(0.5)}
-          style={{
-            fontFamily:    "'DM Mono', monospace",
-            fontSize:      "0.78rem",
-            lineHeight:    1.75,
-            color:         cfg.bioColor,
-            maxWidth:      400,
-            marginBottom:  "1.25rem",
-            letterSpacing: "0.008em",
-            transition:    "color 0.5s",
-          }}
-        >
-          {cfg.bio}
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-          style={{
-            display:     "flex",
-            alignItems:  "center",
-            gap:         16,
-            marginBottom: 14,
-          }}
-        >
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1.1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              flex:            1,
-              transformOrigin: "left center",
-              height:          "1.5px",
-              background:      cfg.separatorBg,
-              transition:      "background 0.6s",
-            }}
-          />
-
-          <motion.span
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 1.0 }}
-            onMouseEnter={() => setYureiHovered(true)}
-            onMouseLeave={() => setYureiHovered(false)}
-            style={{
-              color:         yureiHovered ? cfg.handleHoverColor : cfg.handleColor,
-              fontSize:      "clamp(0.9rem, 1.6vw, 1.2rem)",
-              fontWeight:    400,
-              letterSpacing: "0.05em",
-              fontStyle:     "italic",
-              whiteSpace:    "nowrap",
-              cursor:        "default",
-              textShadow:    yureiHovered ? cfg.handleShadow : "none",
-              transition:    "color 0.3s, text-shadow 0.3s",
-            }}
-          >
-            @YureiYuri
-          </motion.span>
-        </motion.div>
-
-        <SocialLinks cfg={cfg} isDesign={false} />
-      </div>
-    </div>
-  );
-}
-
-// ── DESIGN MODE LAYOUT ────────────────────────────────────
-function DesignLayout({ cfg, nameHovered, portfolioHovered, yureiHovered, setNameHovered, setPortfolioHovered, setYureiHovered }) {
-  return (
-    <div
-      style={{
-        display:        "flex",
-        flexDirection:  "column",
-        justifyContent: "space-between",
-        paddingRight:   40,
-        paddingBottom:  32,
-        height:         "100%",
-      }}
-    >
-      {/* TOP - Artist name & role */}
-      <motion.div
-        {...floatIn(0.05)}
-        onMouseEnter={() => setNameHovered(true)}
-        onMouseLeave={() => setNameHovered(false)}
-        style={{
-          display:       "inline-flex",
-          flexDirection: "column",
-          gap:           12,
-          cursor:        "default",
-          alignSelf:     "flex-start",
-        }}
-      >
-        <motion.span
-          animate={{
-            color:      nameHovered ? cfg.nameHoverColor : cfg.nameColor,
-            textShadow: nameHovered ? cfg.nameHoverShadow : "0 0 0px transparent",
-          }}
-          transition={{ duration: 0.4 }}
-          style={{
-            fontSize:      "1.15rem",
-            fontWeight:    600,
-            letterSpacing: "0.02em",
-            fontFamily:    cfg.fontFamily,
-          }}
-        >
-          James Yuri R. Avila
-        </motion.span>
-
-        <motion.div
-          animate={{ borderLeftColor: nameHovered ? cfg.borderHoverColor : cfg.borderColor }}
-          transition={{ duration: 0.4 }}
-          style={{
-            display:       "flex",
-            flexDirection: "column",
-            gap:           6,
-            paddingLeft:   16,
-            borderLeft:    `2.5px solid ${cfg.borderColor}`,
-          }}
-        >
-          {cfg.titleTags.map((t, i) => (
-            <span
-              key={i}
-              style={{
-                color:         nameHovered ? cfg.titleHoverColor : cfg.titleColor,
-                fontSize:      "0.75rem",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                fontFamily:    "'DM Mono', monospace",
-                transition:    "color 0.4s",
-              }}
-            >
-              {t}
-            </span>
-          ))}
-        </motion.div>
-
-        <div style={{ marginTop: 6 }}>
-          <ClockStatus />
-        </div>
-      </motion.div>
-
-      {/* Currently working with floating badge */}
-      <motion.div
-        {...floatIn(0.2)}
-        style={{
-          display:       "inline-flex",
-          alignItems:    "center",
-          gap:           12,
-          padding:       "10px 16px",
-          borderRadius:  20,
-          background:    cfg.currentWorkBg,
-          border:        `1.5px solid ${cfg.currentWorkBorder}`,
-          backdropFilter:"blur(12px)",
-          width:         "fit-content",
-        }}
-      >
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          style={{
-            width: 8, height: 8,
-            borderRadius: "50%",
-            background: cfg.currentWorkDot,
-            boxShadow: `0 0 12px ${cfg.currentWorkDot}`,
-            flexShrink: 0,
-          }}
-        />
-        <span style={{
-          fontFamily:    "'DM Mono', monospace",
-          fontSize:      "0.65rem",
-          letterSpacing: "0.12em",
-          color:         cfg.currentWorkColor,
-          textTransform: "uppercase",
-          whiteSpace:    "nowrap",
-        }}>
-          {cfg.currentWork}
-        </span>
-      </motion.div>
-
-      {/* SPACER */}
-      <div style={{ flex: 1 }} />
-
-      {/* BOTTOM - Large artistic heading */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        
-        {/* Artistic divider */}
-        <motion.div
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={{ scaleX: 1, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            height:          "2px",
-            background:      cfg.separatorBg,
-            transformOrigin: "left center",
-            transition:      "background 0.6s",
-          }}
-        />
-
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          onMouseEnter={() => setPortfolioHovered(true)}
-          onMouseLeave={() => setPortfolioHovered(false)}
-          style={{
-            fontSize:             "clamp(3.2rem, 7.5vw, 6rem)",
-            fontWeight:           700,
-            lineHeight:           0.95,
-            letterSpacing:        "-0.02em",
-            color:                "transparent",
-            backgroundClip:       "text",
-            WebkitBackgroundClip: "text",
-            backgroundImage:      portfolioHovered ? cfg.headingHoverGradient : cfg.headingGradient,
-            cursor:               "default",
-            filter:               portfolioHovered ? cfg.headingHoverShadow : "none",
-            transition:           "filter 0.5s, background-image 0.6s",
-            fontFamily:           cfg.fontFamily,
-          }}
-        >
-          {cfg.headingLine1}
-          <br />
-          {cfg.headingLine2}
-        </motion.h1>
-
-        {/* Elegant bio */}
-        <motion.p
-          {...floatIn(0.4)}
-          style={{
-            fontFamily:    "'DM Mono', monospace",
-            fontSize:      "0.8rem",
-            lineHeight:    1.85,
-            color:         cfg.bioColor,
-            maxWidth:      420,
-            marginBottom:  "8px",
-            letterSpacing: "0.01em",
-            transition:    "color 0.5s",
-          }}
-        >
-          {cfg.bio}
-        </motion.p>
-
-        {/* Handle with artistic flair */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.55 }}
-          style={{
-            display:     "flex",
-            alignItems:  "center",
-            gap:         12,
-            marginBottom: 20,
-          }}
-        >
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              width: 2,
-              height: 2,
-              borderRadius: "50%",
-              background: cfg.borderColor,
-              opacity: 0.6,
-            }}
-          />
-
-          <motion.span
-            onMouseEnter={() => setYureiHovered(true)}
-            onMouseLeave={() => setYureiHovered(false)}
-            style={{
-              color:         yureiHovered ? cfg.handleHoverColor : cfg.handleColor,
-              fontSize:      "1.05rem",
-              fontWeight:    400,
-              letterSpacing: "0.06em",
-              fontStyle:     "italic",
-              cursor:        "default",
-              textShadow:    yureiHovered ? cfg.handleShadow : "none",
-              transition:    "color 0.3s, text-shadow 0.3s",
-              fontFamily:    cfg.fontFamily,
-            }}
-          >
-            @YureiYuri
-          </motion.span>
-        </motion.div>
-
-        {/* Social links - larger spacing */}
-        <SocialLinks cfg={cfg} isDesign={true} />
-      </div>
-    </div>
-  );
-}
-
 // ── Main Hero Page ─────────────────────────────────────────
 export default function HeroPage() {
   const { theme } = useTheme();
   const cfg = THEME_CONFIG[theme] ?? THEME_CONFIG.tech;
   const isDesignMode = cfg.layoutMode === "design";
+  const [isMobile, setIsMobile] = useState(false);
 
   const [nameHovered,      setNameHovered]      = useState(false);
   const [portfolioHovered, setPortfolioHovered] = useState(false);
   const [yureiHovered,     setYureiHovered]     = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div
@@ -803,7 +425,7 @@ export default function HeroPage() {
       {cfg.overlayColor && (
         <div className="absolute inset-0" style={{ background: cfg.overlayColor, zIndex: 2 }} />
       )}
-      {cfg.showGrid && (
+      {cfg.showGrid && !isMobile && (
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -813,7 +435,7 @@ export default function HeroPage() {
           }}
         />
       )}
-      {cfg.showNoise && (
+      {cfg.showNoise && !isMobile && (
         <div
           className="absolute inset-0 pointer-events-none opacity-20"
           style={{
@@ -834,71 +456,230 @@ export default function HeroPage() {
           zIndex:              10,
           flex:                1,
           display:             "grid",
-          gridTemplateColumns: "1fr 300px",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 300px",
           gap:                 0,
-          padding:             isDesignMode ? "60px 32px 0 48px" : "80px 32px 0 48px",
+          padding:             isMobile 
+            ? "60px 20px 0 20px" 
+            : isDesignMode ? "60px 32px 0 48px" : "80px 32px 0 48px",
           minHeight:           "calc(100vh - 80px)",
+          overflow:            "hidden",
         }}
       >
-        {/* LEFT COLUMN */}
-        {isDesignMode ? (
-          <DesignLayout
-            cfg={cfg}
-            nameHovered={nameHovered}
-            portfolioHovered={portfolioHovered}
-            yureiHovered={yureiHovered}
-            setNameHovered={setNameHovered}
-            setPortfolioHovered={setPortfolioHovered}
-            setYureiHovered={setYureiHovered}
-          />
-        ) : (
-          <TechLayout
-            cfg={cfg}
-            nameHovered={nameHovered}
-            portfolioHovered={portfolioHovered}
-            yureiHovered={yureiHovered}
-            setNameHovered={setNameHovered}
-            setPortfolioHovered={setPortfolioHovered}
-            setYureiHovered={setYureiHovered}
-          />
-        )}
-
-        {/* RIGHT COLUMN — carousel */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        {/* ── Content Column ── */}
+        <div
           style={{
             display:        "flex",
             flexDirection:  "column",
-            gap:            14,
+            justifyContent: "space-between",
+            paddingRight:   isMobile ? 0 : 40,
             paddingBottom:  32,
-            overflowY:      "auto",
-            overflowX:      "visible",
-            scrollbarWidth: "none",
-            maxHeight:      "calc(100vh - 100px)",
+            minHeight:      0,
           }}
         >
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+          {/* TOP */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <motion.div
+              {...fadeUp(0.1)}
+              onMouseEnter={() => !isMobile && setNameHovered(true)}
+              onMouseLeave={() => setNameHovered(false)}
+              style={{
+                display:       "inline-flex",
+                flexDirection: "column",
+                gap:           4,
+                cursor:        "default",
+                alignSelf:     "flex-start",
+              }}
+            >
+              <motion.span
+                animate={{
+                  color:      nameHovered ? cfg.nameHoverColor : cfg.nameColor,
+                  textShadow: nameHovered ? cfg.nameHoverShadow : "0 0 0px transparent",
+                }}
+                transition={{ duration: 0.3 }}
+                style={{ 
+                  fontSize: "clamp(1.1rem, 4vw, 1.25rem)", 
+                  fontWeight: 600, 
+                  letterSpacing: "0.01em" 
+                }}
+              >
+                James Yuri R. Avila
+              </motion.span>
+
+              <motion.div
+                animate={{ borderLeftColor: nameHovered ? cfg.borderHoverColor : cfg.borderColor }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  marginTop:     4,
+                  display:       "flex",
+                  flexDirection: "column",
+                  gap:           2,
+                  paddingLeft:   14,
+                  borderLeft:    `2px solid ${cfg.borderColor}`,
+                }}
+              >
+                {cfg.titleTags.slice(0, isMobile ? 1 : 2).map((t, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      color:         nameHovered ? cfg.titleHoverColor : cfg.titleColor,
+                      fontSize:      "clamp(0.6rem, 2vw, 0.72rem)",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      fontFamily:    "'DM Mono', monospace",
+                      transition:    "color 0.3s",
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </motion.div>
+
+              <div style={{ marginTop: 10 }}>
+                <ClockStatus />
+              </div>
+            </motion.div>
+
+            <CurrentlyWorking cfg={cfg} />
+          </div>
+
+          {/* SPACER */}
+          <div style={{ flex: 1 }} />
+
+          {/* BOTTOM */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <motion.h1
+              initial={{ opacity: 0, x: -60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              onMouseEnter={() => !isMobile && setPortfolioHovered(true)}
+              onMouseLeave={() => setPortfolioHovered(false)}
+              style={{
+                fontSize:             "clamp(2.2rem, 8vw, 6.5rem)",
+                fontWeight:           700,
+                lineHeight:           0.92,
+                letterSpacing:        "-0.025em",
+                color:                "transparent",
+                backgroundClip:       "text",
+                WebkitBackgroundClip: "text",
+                backgroundImage:      portfolioHovered ? cfg.headingHoverGradient : cfg.headingGradient,
+                marginBottom:         "0.7rem",
+                cursor:               "default",
+                filter:               portfolioHovered ? cfg.headingHoverShadow : "none",
+                transition:           "filter 0.4s, background-image 0.5s",
+              }}
+            >
+              {cfg.headingLine1}
+              {!isMobile && <br />}
+              {cfg.headingLine2}
+            </motion.h1>
+
+            <motion.p
+              {...fadeUp(0.5)}
+              style={{
+                fontFamily:    "'DM Mono', monospace",
+                fontSize:      "clamp(0.7rem, 2vw, 0.78rem)",
+                lineHeight:    1.75,
+                color:         cfg.bioColor,
+                maxWidth:      isMobile ? "100%" : 400,
+                marginBottom:  "1.25rem",
+                letterSpacing: "0.008em",
+                transition:    "color 0.5s",
+              }}
+            >
+              {cfg.bio}
+            </motion.p>
+
+            {/* Separator and handle — simplified on mobile */}
+            {!isMobile && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.6 }}
+                style={{
+                  display:     "flex",
+                  alignItems:  "center",
+                  gap:         16,
+                  marginBottom: 14,
+                }}
+              >
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1.1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    flex:            1,
+                    transformOrigin: "left center",
+                    height:          "1.5px",
+                    background:      cfg.separatorBg,
+                    transition:      "background 0.6s",
+                  }}
+                />
+
+                <motion.span
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.7, delay: 1.0 }}
+                  onMouseEnter={() => setYureiHovered(true)}
+                  onMouseLeave={() => setYureiHovered(false)}
+                  style={{
+                    color:         yureiHovered ? cfg.handleHoverColor : cfg.handleColor,
+                    fontSize:      "clamp(0.85rem, 2vw, 1.2rem)",
+                    fontWeight:    400,
+                    letterSpacing: "0.05em",
+                    fontStyle:     "italic",
+                    whiteSpace:    "nowrap",
+                    cursor:        "default",
+                    textShadow:    yureiHovered ? cfg.handleShadow : "none",
+                    transition:    "color 0.3s, text-shadow 0.3s",
+                  }}
+                >
+                  @YureiYuri
+                </motion.span>
+              </motion.div>
+            )}
+
+            <SocialLinks cfg={cfg} isDesign={false} />
+          </div>
+        </div>
+
+        {/* ── Right Column — carousel (hidden on mobile) ── */}
+        {!isMobile && (
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             style={{
-              fontFamily:    "'DM Mono', monospace",
-              fontSize:      "0.58rem",
-              letterSpacing: "0.24em",
-              textTransform: "uppercase",
-              color:         cfg.panelLabelColor,
-              marginBottom:  -4,
-              textAlign:     "right",
-              transition:    "color 0.6s",
+              display:        "flex",
+              flexDirection:  "column",
+              gap:            14,
+              paddingBottom:  32,
+              overflowY:      "auto",
+              overflowX:      "visible",
+              scrollbarWidth: "none",
+              maxHeight:      "calc(100vh - 100px)",
             }}
           >
-            {cfg.panelLabel}
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              style={{
+                fontFamily:    "'DM Mono', monospace",
+                fontSize:      "0.58rem",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color:         cfg.panelLabelColor,
+                marginBottom:  -4,
+                textAlign:     "right",
+                transition:    "color 0.6s",
+              }}
+            >
+              {cfg.panelLabel}
+            </motion.p>
 
-          <HeroCarousel />
-        </motion.div>
+            <HeroCarousel />
+          </motion.div>
+        )}
       </div>
     </div>
   );
