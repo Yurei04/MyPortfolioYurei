@@ -67,10 +67,7 @@ html.dark {
   --accent-glow:   rgba(139, 196, 248, 0.25);
 }
 
-/* ============================================================
-   WIRE THE VARIABLES INTO TAILWIND UTILITIES
-   Use these like: bg-theme, text-fg, border-border, etc.
-   ============================================================ */
+
 @layer base {
   body {
     background-color: var(--bg);

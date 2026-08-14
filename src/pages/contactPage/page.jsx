@@ -19,6 +19,7 @@ import {
   FaCommentDots as MessageCircle,
 } from "react-icons/fa"
 import { ComputerIcon } from "lucide-react";
+import Image from "next/image";
 
 // ── Contact data — replace with your real info ─────────────
 const CONTACT_ITEMS = [
@@ -267,14 +268,11 @@ function CopyButton({ value, p }) {
 function ContactCard({ item, p, delay }) {
   const { Icon } = item;
   return (
-    <motion.a
-      href={item.href}
-      target={item.href.startsWith("http") ? "_blank" : undefined}
-      rel="noopener noreferrer"
+    <motion.div
       initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ borderColor: p.cardHoverBd, background: p.cardHoverBg }}
+      whileHover={{ borderColor: p.cardHoverBd, }}
       style={{
         display: "flex",
         alignItems: "flex-start",
@@ -287,7 +285,7 @@ function ContactCard({ item, p, delay }) {
         WebkitBackdropFilter: "blur(20px)",
         textDecoration: "none",
         cursor: "pointer",
-        transition: "border-color 0.2s, background 0.18s",
+        transition: "border-color 0.2s",
       }}
     >
       {/* Icon */}
@@ -325,7 +323,6 @@ function ContactCard({ item, p, delay }) {
         </div>
       </div>
 
-      {/* Copy or link icon */}
       {item.copyable
         ? <CopyButton value={item.value} p={p} />
         : (
@@ -339,7 +336,7 @@ function ContactCard({ item, p, delay }) {
           </div>
         )
       }
-    </motion.a>
+    </motion.div>
   );
 }
 
@@ -443,7 +440,7 @@ function AvailBadge({ p }) {
           {AVAILABILITY.label}
         </span>
         <span style={{
-          fontFamily: p.mono, fontSize: "0.46rem",
+          fontFamily: p.mono, fontSize: "0.68rem",
           color: p.labelC, marginLeft: 8,
         }}>
           {AVAILABILITY.sub}
@@ -459,13 +456,9 @@ export default function ContactPage() {
   const p         = T[theme] ?? T.tech;
 
   return (
-    <div style={{
-      position: "relative",
-      width: "100%",
-      height: "100dvh",
-      overflow: "hidden",
-      display: "flex",
-      flexDirection: "column",
+    <div 
+    className="flex flex-col overflow-x-hidden relative w-full min-h-screen"
+    style={{
       fontFamily: p.fontFamily,
     }}>
       <style>{`
@@ -476,12 +469,22 @@ export default function ContactPage() {
 
       {/* Backgrounds */}
       {p.bgImage && (
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 0,
-          backgroundImage: `url('${p.bgImage}')`,
-          backgroundSize: "cover", backgroundPosition: "center",
-        }} />
-      )}
+          <Image
+            src={p.bgImage}
+            alt=""
+            loading="lazy"
+            width={100}
+            height={100}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              zIndex: 0,
+            }}
+          />
+        )}
       <div style={{
         position: "absolute", inset: 0, zIndex: 1,
         background: p.bgGradient, transition: "background 0.7s",
@@ -540,13 +543,7 @@ export default function ContactPage() {
         </div>
 
         {/* ── Two-column body ── */}
-        <div style={{
-          flex: 1, minHeight: 0,
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 28,
-        }}>
-
+        <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-7">
           {/* LEFT — direct contacts + tagline */}
           <div style={{
             display: "flex", flexDirection: "column", gap: 0,
@@ -583,7 +580,7 @@ export default function ContactPage() {
             >
               <div style={{ width: 3, height: 22, borderRadius: 2, background: p.lineColor, opacity: 0.4 }} />
               <span style={{
-                fontFamily: p.mono, fontSize: "0.52rem",
+                fontFamily: p.mono, fontSize: "0.68rem",
                 lineHeight: 1.7, color: p.labelC,
               }}>
                 Response time is usually within a day. I'm based in{" "}
@@ -604,7 +601,7 @@ export default function ContactPage() {
               <span style={{
                 fontFamily: p.mono, fontSize: "0.46rem",
                 letterSpacing: "0.28em", textTransform: "uppercase",
-                color: p.sub, opacity: 0.65, flexShrink: 0,
+                color: p.sub, flexShrink: 0,
               }}>
                 Socials & Links
               </span>
@@ -630,22 +627,17 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.55 }}
+              className="mt-4 p-8 rounded-2xl gap-16 justify-between items-end flex"
               style={{
-                marginTop: "auto",
-                padding: "20px 22px",
-                borderRadius: 16,
                 background: p.cardBg,
                 border: `1px solid ${p.cardBd}`,
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 16,
               }}
             >
               <div>
-                <div style={{
+                <div 
+                style={{
                   fontFamily: p.fontFamily, fontSize: "0.92rem",
                   fontWeight: 700, color: p.valueC, marginBottom: 5,
                 }}>
