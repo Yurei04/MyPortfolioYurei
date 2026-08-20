@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/app/themeProvider";
@@ -7,11 +7,9 @@ import {
   Code2, Globe, Palette, Layers, Database,
   Box, Zap, GitBranch, Terminal, FlaskConical,
   BrainCircuit, Eye, Shield, Smartphone,
-  ChevronDown, Cpu, Calendar, Wrench,
+  ChevronDown, Cpu, Calendar, Wrench, Menu, X,
   PaintBucket, Film, Image as ImageIcon,
-  Sparkles,
-  Mic2,
-  VideoIcon,
+  Sparkles, Mic2, VideoIcon,
 } from "lucide-react";
 
 // ── Tech Skills ────────────────────────────────────────────
@@ -168,74 +166,45 @@ const DESIGN_SKILLS = [
     id: "figma", name: "Figma", category: "Web Design",
     level: "Advanced", proficiency: 4, accent: "#ff6b6b", Icon: Palette,
     tags: ["UI Design", "Prototyping", "Components", "Design Systems"],
-    desc: "Used for prototyping and high-fidelity design before implementation. Design systems built in Figma underpin the visual identity of Opitulare, Workable, and Byteon. Extensive experience with component libraries, auto-layout, and design tokens.",
+    desc: "Used for prototyping and high-fidelity design before implementation. Design systems built in Figma underpin the visual identity of Opitulare, Workable, and Byteon.",
     projects: ["Opitulare", "Workable", "Byteon", "Carbonated"],
     since: "2023",
   },
   {
-    id: "drawio",
-    name: "Draw.io",
-    category: "Tools",
-    level: "Advanced",
-    proficiency: 4,
-    accent: "#f08705",
-    Icon: Palette,
+    id: "drawio", name: "Draw.io", category: "Tools",
+    level: "Advanced", proficiency: 4, accent: "#f08705", Icon: Palette,
     tags: ["Diagrams", "Flowcharts", "System Design", "Wireframes"],
     desc: "Experienced in creating technical diagrams, system architectures, user flows, process maps, and documentation visuals for software and project planning.",
     projects: ["System Architecture", "Project Documentation"],
     since: "2023",
   },
-
   {
-    id: "hailuo-ai",
-    name: "Hailuo AI",
-    category: "Tools",
-    level: "Intermediate",
-    proficiency: 3,
-    accent: "#7c3aed",
-    Icon: Sparkles,
+    id: "hailuo-ai", name: "Hailuo AI", category: "Tools",
+    level: "Intermediate", proficiency: 3, accent: "#7c3aed", Icon: Sparkles,
     tags: ["AI Video", "Text-to-Video", "Content Creation", "Generative AI"],
     desc: "Utilized Hailuo AI for generating AI-powered video content, visual storytelling, and rapid creative concept development.",
     projects: ["AI Video Projects", "Content Creation"],
     since: "2025",
   },
-
   {
-    id: "kling",
-    name: "Kling AI",
-    category: "Tools",
-    level: "Advanced",
-    proficiency: 4,
-    accent: "#ec4899",
-    Icon: Sparkles,
+    id: "kling", name: "Kling AI", category: "Tools",
+    level: "Advanced", proficiency: 4, accent: "#ec4899", Icon: Sparkles,
     tags: ["AI Video", "Image-to-Video", "Animation", "Generative AI"],
     desc: "Experienced in producing high-quality AI-generated videos, cinematic animations, and marketing content using Kling AI's advanced video generation capabilities.",
     projects: ["Marketing Videos", "AI Content Production"],
     since: "2025",
   },
-
   {
-    id: "elevenlabs",
-    name: "ElevenLabs",
-    category: "Tools",
-    level: "Advanced",
-    proficiency: 4,
-    accent: "#4f46e5",
-    Icon: Mic2,
+    id: "elevenlabs", name: "ElevenLabs", category: "Tools",
+    level: "Advanced", proficiency: 4, accent: "#4f46e5", Icon: Mic2,
     tags: ["Text-to-Speech", "Voice Cloning", "AI Audio", "Narration"],
     desc: "Skilled in generating realistic AI voiceovers, narrations, and multilingual audio content using ElevenLabs for creative and professional projects.",
     projects: ["AI Voiceovers", "Content Narration"],
     since: "2025",
   },
-
   {
-    id: "capcut",
-    name: "CapCut",
-    category: "Video Editing",
-    level: "Advanced",
-    proficiency: 5,
-    accent: "#000000",
-    Icon: VideoIcon,
+    id: "capcut", name: "CapCut", category: "Video Editing",
+    level: "Advanced", proficiency: 5, accent: "#000000", Icon: VideoIcon,
     tags: ["Video Editing", "Motion Graphics", "Short-form Content", "Social Media"],
     desc: "Advanced video editing experience creating engaging short-form content, promotional videos, UGC advertisements, and social media campaigns using CapCut.",
     projects: ["UGC Ads", "Social Media Content", "Marketing Videos"],
@@ -291,7 +260,6 @@ const DESIGN_SKILLS = [
   },
 ];
 
-// ── Categories & Icons ─────────────────────────────────────
 const TECH_CATEGORIES = ["All", "Languages", "Frontend", "Backend", "AI/ML", "Tools"];
 const DESIGN_CATEGORIES = ["All", "Photo Editing", "Video Editing", "Web Design", "Tools"];
 
@@ -323,7 +291,6 @@ const STATS = [
   { value: "3+", label: "Years" },
 ];
 
-// ── Theme tokens ───────────────────────────────────────────
 const T = {
   tech: {
     bgImage: "/images/techImages/tech1background.png",
@@ -459,10 +426,10 @@ const T = {
   },
 };
 
-// ── Segment proficiency bar ────────────────────────────────
+// ── Proficiency Bar ────────────────────────────────────
 function ProfBar({ proficiency, accent, trackBg, size = "md" }) {
-  const w = size === "lg" ? 28 : 22;
-  const h = size === "lg" ? 4 : 3;
+  const w = size === "lg" ? 28 : size === "sm" ? 16 : 22;
+  const h = size === "lg" ? 4 : size === "sm" ? 2.5 : 3;
   return (
     <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
       {[1, 2, 3, 4, 5].map((i) => (
@@ -482,11 +449,129 @@ function ProfBar({ proficiency, accent, trackBg, size = "md" }) {
   );
 }
 
-// ── Sidebar ────────────────────────────────────────────────
-function Sidebar({ filter, onFilter, p, categories, categoryIcons }) {
+// ── Mobile Sidebar (Collapsible) ────────────────────────────────────
+function MobileSidebar({ filter, onFilter, p, categories, categoryIcons, onClose }) {
   const counts = categories.reduce((acc, cat) => {
     if (cat === "All") {
-      acc[cat] = cat === "All" ? (categoryIcons === TECH_CATEGORY_ICONS ? TECH_SKILLS.length : DESIGN_SKILLS.length) : 0;
+      acc[cat] = categoryIcons === TECH_CATEGORY_ICONS ? TECH_SKILLS.length : DESIGN_SKILLS.length;
+    } else {
+      const skills = categoryIcons === TECH_CATEGORY_ICONS ? TECH_SKILLS : DESIGN_SKILLS;
+      acc[cat] = skills.filter((s) => s.category === cat).length;
+    }
+    return acc;
+  }, {});
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.5)",
+        backdropFilter: "blur(4px)",
+        zIndex: 40,
+      }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ x: -300 }}
+        animate={{ x: 0 }}
+        exit={{ x: -300 }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 240,
+          background: p.sidebarBg,
+          border: `1px solid ${p.sidebarBd}`,
+          borderRadius: "0 18px 18px 0",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          overflow: "auto",
+          zIndex: 41,
+          padding: "20px 16px",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {categories.map((cat) => {
+            const isA = filter === cat;
+            const CatIcon = cat !== "All" ? categoryIcons[cat] : null;
+            return (
+              <motion.button
+                key={cat}
+                onClick={() => {
+                  onFilter(cat);
+                  onClose();
+                }}
+                whileTap={{ scale: 0.97 }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 8,
+                  width: "100%",
+                  padding: "8px 11px",
+                  borderRadius: 9,
+                  border: `1px solid ${isA ? p.catBtnActiveBd : p.catBtnBd}`,
+                  background: isA ? p.catBtnActiveBg : p.catBtnBg,
+                  cursor: "pointer",
+                  outline: "none",
+                  transition: "all 0.16s",
+                  textAlign: "left",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  {CatIcon && (
+                    <CatIcon
+                      size={11}
+                      color={isA ? p.catBtnActiveC : p.catBtnC}
+                      strokeWidth={1.8}
+                      style={{ flexShrink: 0 }}
+                    />
+                  )}
+                  <span
+                    style={{
+                      fontFamily: p.mono,
+                      fontSize: "0.68rem",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: isA ? p.catBtnActiveC : p.catBtnC,
+                      fontWeight: isA ? 700 : 500,
+                      transition: "color 0.16s",
+                    }}
+                  >
+                    {cat}
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontFamily: p.mono,
+                    fontSize: "0.44rem",
+                    color: isA ? p.catBtnActiveC : p.catBtnC,
+                    opacity: 0.55,
+                  }}
+                >
+                  {counts[cat]}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ── Desktop Sidebar ────────────────────────────────────
+function DesktopSidebar({ filter, onFilter, p, categories, categoryIcons }) {
+  const counts = categories.reduce((acc, cat) => {
+    if (cat === "All") {
+      acc[cat] = categoryIcons === TECH_CATEGORY_ICONS ? TECH_SKILLS.length : DESIGN_SKILLS.length;
     } else {
       const skills = categoryIcons === TECH_CATEGORY_ICONS ? TECH_SKILLS : DESIGN_SKILLS;
       acc[cat] = skills.filter((s) => s.category === cat).length;
@@ -516,7 +601,6 @@ function Sidebar({ filter, onFilter, p, categories, categoryIcons }) {
         WebkitBackdropFilter: "blur(24px)",
       }}
     >
-      {/* Category section */}
       <div style={{ padding: "20px 16px 16px", flex: "0 0 auto" }}>
         <span
           style={{
@@ -596,10 +680,8 @@ function Sidebar({ filter, onFilter, p, categories, categoryIcons }) {
         </div>
       </div>
 
-      {/* Divider */}
       <div style={{ height: 1, margin: "0 14px", background: p.dividerC, flexShrink: 0 }} />
 
-      {/* Level legend */}
       <div style={{ padding: "16px 16px 20px", flex: "0 0 auto" }}>
         <span
           style={{
@@ -642,11 +724,282 @@ function Sidebar({ filter, onFilter, p, categories, categoryIcons }) {
   );
 }
 
-// ── Skill Row ──────────────────────────────────────────────
-function SkillRow({ skill, p, isOpen, onToggle, index }) {
+// ── Skill Row (Responsive) ────────────────────────────────────
+function SkillRow({ skill, p, isOpen, onToggle, index, isMobile }) {
   const { Icon } = skill;
   const levelMeta = LEVELS[skill.level] ?? LEVELS["Intermediate"];
 
+  if (isMobile) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -4 }}
+        transition={{ duration: 0.3, delay: index * 0.025 }}
+        style={{ borderRadius: 12, overflow: "hidden", marginBottom: 8 }}
+      >
+        {/* Mobile Header */}
+        <motion.div
+          onClick={onToggle}
+          whileHover={{ background: p.rowHoverBg }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            padding: "12px 12px",
+            background: isOpen ? p.rowBgOpen : p.rowBg,
+            border: `1px solid ${isOpen ? skill.accent + "40" : p.rowBorder}`,
+            borderBottom: isOpen ? "none" : undefined,
+            borderRadius: isOpen ? "12px 12px 0 0" : 12,
+            cursor: "pointer",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            transition: "border-color 0.2s, background 0.18s",
+            userSelect: "none",
+          }}
+        >
+          {/* Row 1: Icon + Name + Chevron */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: `${skill.accent}12`,
+                border: `1.5px solid ${skill.accent}30`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Icon size={15} color={skill.accent} strokeWidth={1.6} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div
+                style={{
+                  fontFamily: p.fontFamily,
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  color: p.titleC,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {skill.name}
+              </div>
+            </div>
+            <motion.div
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              transition={{ duration: 0.22 }}
+              style={{ color: p.chevronC, flexShrink: 0 }}
+            >
+              <ChevronDown size={12} />
+            </motion.div>
+          </div>
+
+          {/* Row 2: Tags + Level */}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+            {skill.tags.slice(0, 2).map((tag) => (
+              <span
+                key={tag}
+                style={{
+                  fontFamily: p.mono,
+                  fontSize: "0.45rem",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  padding: "2px 6px",
+                  borderRadius: 999,
+                  background: p.badgeBg,
+                  border: `1px solid ${p.badgeBd}`,
+                  color: p.badgeC,
+                  fontWeight: 500,
+                  flex: "0 0 auto",
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+            {skill.tags.length > 2 && (
+              <span
+                style={{
+                  fontFamily: p.mono,
+                  fontSize: "0.45rem",
+                  color: p.sub,
+                  opacity: 0.55,
+                  flex: "0 0 auto",
+                }}
+              >
+                +{skill.tags.length - 2}
+              </span>
+            )}
+            <div
+              style={{
+                marginLeft: "auto",
+                padding: "3px 8px",
+                borderRadius: 999,
+                background: `${levelMeta.color}12`,
+                border: `1px solid ${levelMeta.color}35`,
+                flexShrink: 0,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: p.mono,
+                  fontSize: "0.48rem",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: levelMeta.color,
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {skill.level}
+              </span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Mobile Expanded */}
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              key="body"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28 }}
+              style={{ overflow: "hidden" }}
+            >
+              <div
+                style={{
+                  background: p.expandBg,
+                  border: `1px solid ${skill.accent}35`,
+                  borderTop: "none",
+                  borderRadius: "0 0 12px 12px",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  padding: "16px 12px",
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: p.mono,
+                    fontSize: "0.75rem",
+                    lineHeight: 1.6,
+                    color: p.descC,
+                    margin: "0 0 12px",
+                    fontWeight: 500,
+                  }}
+                >
+                  {skill.desc}
+                </p>
+
+                <div style={{ marginBottom: 12 }}>
+                  <span
+                    style={{
+                      fontFamily: p.mono,
+                      fontSize: "0.55rem",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: p.metaLabelC,
+                      display: "block",
+                      marginBottom: 6,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Technologies
+                  </span>
+                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                    {skill.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        style={{
+                          fontFamily: p.mono,
+                          fontSize: "0.48rem",
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          padding: "3px 8px",
+                          borderRadius: 999,
+                          background: p.badgeBg,
+                          border: `1px solid ${p.badgeBd}`,
+                          color: p.badgeC,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 6 }}>
+                    <Cpu size={9} color={p.metaLabelC} />
+                    <span
+                      style={{
+                        fontFamily: p.mono,
+                        fontSize: "0.55rem",
+                        letterSpacing: "0.2em",
+                        textTransform: "uppercase",
+                        color: p.metaLabelC,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Projects
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                    {skill.projects.slice(0, 3).map((proj) => (
+                      <span
+                        key={proj}
+                        style={{
+                          fontFamily: p.mono,
+                          fontSize: "0.48rem",
+                          letterSpacing: "0.05em",
+                          padding: "3px 8px",
+                          borderRadius: 999,
+                          background: p.projectBg,
+                          border: `1px solid ${p.projectBd}`,
+                          color: skill.accent,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {proj}
+                      </span>
+                    ))}
+                    {skill.projects.length > 3 && (
+                      <span
+                        style={{
+                          fontFamily: p.mono,
+                          fontSize: "0.48rem",
+                          color: p.sub,
+                          opacity: 0.5,
+                          alignSelf: "center",
+                        }}
+                      >
+                        +{skill.projects.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <ProfBar proficiency={skill.proficiency} accent={skill.accent} trackBg={p.trackBg} size="sm" />
+                  <span style={{ fontFamily: p.mono, fontSize: "0.55rem", color: levelMeta.color, fontWeight: 700 }}>
+                    {skill.proficiency}/5
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    );
+  }
+
+  // DESKTOP VERSION
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -655,7 +1008,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
       transition={{ duration: 0.3, delay: index * 0.025, ease: [0.22, 1, 0.36, 1] }}
       style={{ borderRadius: 14, overflow: "hidden", marginBottom: 7 }}
     >
-      {/* Header */}
       <motion.div
         onClick={onToggle}
         whileHover={{ background: p.rowHoverBg }}
@@ -676,7 +1028,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
           userSelect: "none",
         }}
       >
-        {/* Accent pill */}
         <div
           style={{
             width: 4,
@@ -689,7 +1040,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
           }}
         />
 
-        {/* Icon */}
         <div
           style={{
             width: 40,
@@ -706,7 +1056,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
           <Icon size={17} color={skill.accent} strokeWidth={1.6} />
         </div>
 
-        {/* Name + tags */}
         <div style={{ minWidth: 0 }}>
           <div
             style={{
@@ -761,7 +1110,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
           </div>
         </div>
 
-        {/* Since */}
         <div style={{ flexShrink: 0, textAlign: "right" }}>
           <div
             style={{
@@ -781,12 +1129,10 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
           </div>
         </div>
 
-        {/* Proficiency bar */}
         <div style={{ flexShrink: 0 }}>
           <ProfBar proficiency={skill.proficiency} accent={skill.accent} trackBg={p.trackBg} />
         </div>
 
-        {/* Level pill */}
         <div
           style={{
             flexShrink: 0,
@@ -811,7 +1157,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
           </span>
         </div>
 
-        {/* Chevron */}
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.22 }}
@@ -821,7 +1166,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
         </motion.div>
       </motion.div>
 
-      {/* Expanded panel */}
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
@@ -849,9 +1193,7 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
                 }}
               />
 
-              {/* Two-column body */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 280px" }}>
-                {/* Left — desc + tags */}
                 <div style={{ padding: "20px 22px 20px 26px", borderRight: `1px solid ${skill.accent}18` }}>
                   <p
                     style={{
@@ -902,7 +1244,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
                   </div>
                 </div>
 
-                {/* Right — meta */}
                 <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", gap: 18 }}>
                   <div>
                     <span
@@ -990,7 +1331,7 @@ function SkillRow({ skill, p, isOpen, onToggle, index }) {
   );
 }
 
-// ── Category divider ───────────────────────────────────────
+// ── Category Divider ────────────────────────────────────
 function CategoryDivider({ label, count, p }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10, marginTop: 4 }}>
@@ -1022,12 +1363,11 @@ function CategoryDivider({ label, count, p }) {
   );
 }
 
-// ── Main ───────────────────────────────────────────────────
+// ── Main Component ────────────────────────────────────────────
 export default function SkillsPage() {
   const { theme } = useTheme();
   const p = T[theme] ?? T.tech;
 
-  // Determine if we're in design mode based on theme
   const isDesignMode = theme === "fantasy-morning" || theme === "fantasy-night";
 
   const skills = isDesignMode ? DESIGN_SKILLS : TECH_SKILLS;
@@ -1036,6 +1376,16 @@ export default function SkillsPage() {
 
   const [filter, setFilter] = useState("All");
   const [openId, setOpenId] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleFilter = (cat) => {
     setFilter(cat);
@@ -1070,9 +1420,13 @@ export default function SkillsPage() {
         .skill-scroll::-webkit-scrollbar { width: 4px; }
         .skill-scroll::-webkit-scrollbar-track { background: transparent; }
         .skill-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 2px; }
+        
+        @media (max-width: 1023px) {
+          body { overflow: hidden; }
+        }
       `}</style>
 
-      {/* ── Backgrounds (fills full viewport) ── */}
+      {/* ── Backgrounds ── */}
       {p.bgImage && (
         <div
           style={{
@@ -1099,42 +1453,57 @@ export default function SkillsPage() {
         />
       )}
 
-      {/* ── Header — fixed height, never scrolls ── */}
+      {/* ── Header ── */}
       <div
         style={{
           position: "relative",
           zIndex: 10,
-          padding: "44px 48px 28px",
+          padding: isMobile ? "24px 16px 16px" : "44px 48px 28px",
           flexShrink: 0,
           animation: "fadeUp 0.65s cubic-bezier(0.22,1,0.36,1) both",
         }}
       >
-        <p
-          style={{
-            fontFamily: p.mono,
-            fontSize: "0.85rem",
-            letterSpacing: "0.34em",
-            textTransform: "uppercase",
-            color: p.sub,
-            marginBottom: 8,
-            fontWeight: 600,
-          }}
-        >
-          {p.eyebrow}
-        </p>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 16,
-          }}
-        >
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: isMobile ? 12 : 0 }}>
+          {isMobile && (
+            <motion.button
+              onClick={() => setSidebarOpen(true)}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: "rgba(255,255,255,0.1)",
+                border: `1px solid ${p.statBd}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                backdropFilter: "blur(12px)",
+              }}
+            >
+              <Menu size={18} color={p.titleC} />
+            </motion.button>
+          )}
+          <p
+            style={{
+              fontFamily: p.mono,
+              fontSize: isMobile ? "0.65rem" : "0.85rem",
+              letterSpacing: "0.34em",
+              textTransform: "uppercase",
+              color: p.sub,
+              margin: 0,
+              fontWeight: 600,
+            }}
+          >
+            {p.eyebrow}
+          </p>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <h1
             style={{
               fontFamily: p.fontFamily,
-              fontSize: "clamp(2.4rem, 4.5vw, 3.8rem)",
+              fontSize: isMobile ? "clamp(1.8rem, 6vw, 2.4rem)" : "clamp(2.4rem, 4.5vw, 3.8rem)",
               fontWeight: 700,
               lineHeight: 0.92,
               letterSpacing: "-0.02em",
@@ -1147,63 +1516,69 @@ export default function SkillsPage() {
           >
             {p.sectionLabel}
           </h1>
-          <div style={{ display: "flex", gap: 8 }}>
-            {STATS.map((s) => (
-              <div
-                key={s.label}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "6px 13px",
-                  borderRadius: 999,
-                  background: "rgba(255,255,255,0.04)",
-                  border: `1px solid ${p.statBd}`,
-                  backdropFilter: "blur(12px)",
-                }}
-              >
-                <span
+
+          {!isMobile && (
+            <div style={{ display: "flex", gap: 8 }}>
+              {STATS.map((s) => (
+                <div
+                  key={s.label}
                   style={{
-                    fontFamily: p.fontFamily,
-                    fontSize: "1.3rem",
-                    fontWeight: 700,
-                    backgroundImage: p.headingGrad,
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    color: "transparent",
-                    lineHeight: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "6px 13px",
+                    borderRadius: 999,
+                    background: "rgba(255,255,255,0.04)",
+                    border: `1px solid ${p.statBd}`,
+                    backdropFilter: "blur(12px)",
                   }}
                 >
-                  {s.value}
-                </span>
-                <span
-                  style={{
-                    fontFamily: p.mono,
-                    fontSize: "0.68rem",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: p.sub,
-                    fontWeight: 500,
-                  }}
-                >
-                  {s.label}
-                </span>
-              </div>
-            ))}
-          </div>
+                  <span
+                    style={{
+                      fontFamily: p.fontFamily,
+                      fontSize: "1.3rem",
+                      fontWeight: 700,
+                      backgroundImage: p.headingGrad,
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      color: "transparent",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {s.value}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: p.mono,
+                      fontSize: "0.68rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: p.sub,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {s.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <div
-          style={{
-            height: 1.5,
-            marginTop: 18,
-            transformOrigin: "left center",
-            background: `linear-gradient(90deg, ${p.lineColor} 0%, ${p.lineGlow} 60%, transparent 100%)`,
-            animation: "slideX 1s cubic-bezier(0.22,1,0.36,1) 0.1s both",
-          }}
-        />
+
+        {!isMobile && (
+          <div
+            style={{
+              height: 1.5,
+              marginTop: 18,
+              transformOrigin: "left center",
+              background: `linear-gradient(90deg, ${p.lineColor} 0%, ${p.lineGlow} 60%, transparent 100%)`,
+              animation: "slideX 1s cubic-bezier(0.22,1,0.36,1) 0.1s both",
+            }}
+          />
+        )}
       </div>
 
-      {/* ── Body — takes all remaining height, never overflows ── */}
+      {/* ── Body ── */}
       <div
         style={{
           position: "relative",
@@ -1211,17 +1586,33 @@ export default function SkillsPage() {
           flex: 1,
           minHeight: 0,
           display: "flex",
-          gap: 24,
-          padding: "0 48px 32px",
+          gap: isMobile ? 0 : 24,
+          padding: isMobile ? "0 16px 16px" : "0 48px 32px",
           overflow: "hidden",
         }}
       >
-        {/* Sidebar — full height, static */}
-        <div style={{ flexShrink: 0, height: "100%", animation: "fadeUp 0.45s ease 0.1s both" }}>
-          <Sidebar filter={filter} onFilter={handleFilter} p={p} categories={categories} categoryIcons={categoryIcons} />
-        </div>
+        {/* Desktop Sidebar */}
+        {!isMobile && (
+          <div style={{ flexShrink: 0, height: "100%", animation: "fadeUp 0.45s ease 0.1s both" }}>
+            <DesktopSidebar filter={filter} onFilter={handleFilter} p={p} categories={categories} categoryIcons={categoryIcons} />
+          </div>
+        )}
 
-        {/* Skill list — scrollable */}
+        {/* Mobile Sidebar */}
+        <AnimatePresence>
+          {isMobile && sidebarOpen && (
+            <MobileSidebar
+              filter={filter}
+              onFilter={handleFilter}
+              p={p}
+              categories={categories}
+              categoryIcons={categoryIcons}
+              onClose={() => setSidebarOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Skill List */}
         <div
           className="skill-scroll"
           style={{
@@ -1231,7 +1622,7 @@ export default function SkillsPage() {
             height: "100%",
             overflowY: "auto",
             overflowX: "hidden",
-            paddingRight: 6,
+            paddingRight: isMobile ? 0 : 6,
             animation: "fadeUp 0.45s ease 0.16s both",
           }}
         >
@@ -1245,12 +1636,14 @@ export default function SkillsPage() {
             >
               {grouped
                 ? grouped.map(({ cat, skills: catSkills }, gi) => (
-                    <div key={cat} style={{ marginBottom: gi < grouped.length - 1 ? 32 : 0 }}>
-                      <CategoryDivider
-                        label={cat}
-                        count={`${catSkills.length} skill${catSkills.length > 1 ? "s" : ""}`}
-                        p={p}
-                      />
+                    <div key={cat} style={{ marginBottom: gi < grouped.length - 1 ? 24 : 0 }}>
+                      {!isMobile && (
+                        <CategoryDivider
+                          label={cat}
+                          count={`${catSkills.length} skill${catSkills.length > 1 ? "s" : ""}`}
+                          p={p}
+                        />
+                      )}
                       {catSkills.map((skill, i) => (
                         <SkillRow
                           key={skill.id}
@@ -1259,6 +1652,7 @@ export default function SkillsPage() {
                           index={i}
                           isOpen={openId === skill.id}
                           onToggle={() => setOpenId(openId === skill.id ? null : skill.id)}
+                          isMobile={isMobile}
                         />
                       ))}
                     </div>
@@ -1271,10 +1665,10 @@ export default function SkillsPage() {
                       index={i}
                       isOpen={openId === skill.id}
                       onToggle={() => setOpenId(openId === skill.id ? null : skill.id)}
+                      isMobile={isMobile}
                     />
                   ))}
-              {/* Bottom breathing room */}
-              <div style={{ height: 16 }} />
+              <div style={{ height: isMobile ? 8 : 16 }} />
             </motion.div>
           </AnimatePresence>
         </div>
