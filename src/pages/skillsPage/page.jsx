@@ -738,7 +738,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index, isMobile }) {
         transition={{ duration: 0.3, delay: index * 0.025 }}
         style={{ borderRadius: 12, overflow: "hidden", marginBottom: 8 }}
       >
-        {/* Mobile Header */}
         <motion.div
           onClick={onToggle}
           whileHover={{ background: p.rowHoverBg }}
@@ -758,7 +757,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index, isMobile }) {
             userSelect: "none",
           }}
         >
-          {/* Row 1: Icon + Name + Chevron */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
             <div
               style={{
@@ -799,7 +797,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index, isMobile }) {
             </motion.div>
           </div>
 
-          {/* Row 2: Tags + Level */}
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
             {skill.tags.slice(0, 2).map((tag) => (
               <span
@@ -861,7 +858,6 @@ function SkillRow({ skill, p, isOpen, onToggle, index, isMobile }) {
           </div>
         </motion.div>
 
-        {/* Mobile Expanded */}
         <AnimatePresence initial={false}>
           {isOpen && (
             <motion.div
@@ -1420,10 +1416,6 @@ export default function SkillsPage() {
         .skill-scroll::-webkit-scrollbar { width: 4px; }
         .skill-scroll::-webkit-scrollbar-track { background: transparent; }
         .skill-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 2px; }
-        
-        @media (max-width: 1023px) {
-          body { overflow: hidden; }
-        }
       `}</style>
 
       {/* ── Backgrounds ── */}
@@ -1586,6 +1578,7 @@ export default function SkillsPage() {
           flex: 1,
           minHeight: 0,
           display: "flex",
+          flexDirection: "column",
           gap: isMobile ? 0 : 24,
           padding: isMobile ? "0 16px 16px" : "0 48px 32px",
           overflow: "hidden",
@@ -1593,58 +1586,55 @@ export default function SkillsPage() {
       >
         {/* Desktop Sidebar */}
         {!isMobile && (
-          <div style={{ flexShrink: 0, height: "100%", animation: "fadeUp 0.45s ease 0.1s both" }}>
-            <DesktopSidebar filter={filter} onFilter={handleFilter} p={p} categories={categories} categoryIcons={categoryIcons} />
-          </div>
-        )}
+          <div style={{ display: "flex", gap: 24, flex: 1, minHeight: 0, animation: "fadeUp 0.45s ease 0.1s both" }}>
+            <div style={{ flexShrink: 0, height: "100%" }}>
+              <DesktopSidebar filter={filter} onFilter={handleFilter} p={p} categories={categories} categoryIcons={categoryIcons} />
+            </div>
 
-        {/* Mobile Sidebar */}
-        <AnimatePresence>
-          {isMobile && sidebarOpen && (
-            <MobileSidebar
-              filter={filter}
-              onFilter={handleFilter}
-              p={p}
-              categories={categories}
-              categoryIcons={categoryIcons}
-              onClose={() => setSidebarOpen(false)}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Skill List */}
-        <div
-          className="skill-scroll"
-          style={{
-            "--scroll-thumb": p.scrollThumb,
-            flex: 1,
-            minWidth: 0,
-            height: "100%",
-            overflowY: "auto",
-            overflowX: "hidden",
-            paddingRight: isMobile ? 0 : 6,
-            animation: "fadeUp 0.45s ease 0.16s both",
-          }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={filter}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
+            {/* Skill List - Desktop */}
+            <div
+              className="skill-scroll"
+              style={{
+                "--scroll-thumb": p.scrollThumb,
+                flex: 1,
+                minWidth: 0,
+                minHeight: 0,
+                overflowY: "auto",
+                overflowX: "hidden",
+                paddingRight: 6,
+                animation: "fadeUp 0.45s ease 0.16s both",
+              }}
             >
-              {grouped
-                ? grouped.map(({ cat, skills: catSkills }, gi) => (
-                    <div key={cat} style={{ marginBottom: gi < grouped.length - 1 ? 24 : 0 }}>
-                      {!isMobile && (
-                        <CategoryDivider
-                          label={cat}
-                          count={`${catSkills.length} skill${catSkills.length > 1 ? "s" : ""}`}
-                          p={p}
-                        />
-                      )}
-                      {catSkills.map((skill, i) => (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={filter}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {grouped
+                    ? grouped.map(({ cat, skills: catSkills }, gi) => (
+                        <div key={cat} style={{ marginBottom: gi < grouped.length - 1 ? 24 : 0 }}>
+                          <CategoryDivider
+                            label={cat}
+                            count={`${catSkills.length} skill${catSkills.length > 1 ? "s" : ""}`}
+                            p={p}
+                          />
+                          {catSkills.map((skill, i) => (
+                            <SkillRow
+                              key={skill.id}
+                              skill={skill}
+                              p={p}
+                              index={i}
+                              isOpen={openId === skill.id}
+                              onToggle={() => setOpenId(openId === skill.id ? null : skill.id)}
+                              isMobile={isMobile}
+                            />
+                          ))}
+                        </div>
+                      ))
+                    : filtered.map((skill, i) => (
                         <SkillRow
                           key={skill.id}
                           skill={skill}
@@ -1655,23 +1645,90 @@ export default function SkillsPage() {
                           isMobile={isMobile}
                         />
                       ))}
-                    </div>
-                  ))
-                : filtered.map((skill, i) => (
-                    <SkillRow
-                      key={skill.id}
-                      skill={skill}
-                      p={p}
-                      index={i}
-                      isOpen={openId === skill.id}
-                      onToggle={() => setOpenId(openId === skill.id ? null : skill.id)}
-                      isMobile={isMobile}
-                    />
-                  ))}
-              <div style={{ height: isMobile ? 8 : 16 }} />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+                  <div style={{ height: 16 }} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile View */}
+        {isMobile && (
+          <>
+            {/* Mobile Sidebar */}
+            <AnimatePresence>
+              {sidebarOpen && (
+                <MobileSidebar
+                  filter={filter}
+                  onFilter={handleFilter}
+                  p={p}
+                  categories={categories}
+                  categoryIcons={categoryIcons}
+                  onClose={() => setSidebarOpen(false)}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Skill List - Mobile */}
+            <div
+              className="skill-scroll"
+              style={{
+                "--scroll-thumb": p.scrollThumb,
+                flex: 1,
+                minWidth: 0,
+                minHeight: 0,
+                overflowY: "auto",
+                overflowX: "hidden",
+                WebkitOverflowScrolling: "touch",
+                animation: "fadeUp 0.45s ease 0.16s both",
+              }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={filter}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {grouped
+                    ? grouped.map(({ cat, skills: catSkills }, gi) => (
+                        <div key={cat} style={{ marginBottom: gi < grouped.length - 1 ? 24 : 0 }}>
+                          <CategoryDivider
+                            label={cat}
+                            count={`${catSkills.length} skill${catSkills.length > 1 ? "s" : ""}`}
+                            p={p}
+                          />
+                          {catSkills.map((skill, i) => (
+                            <SkillRow
+                              key={skill.id}
+                              skill={skill}
+                              p={p}
+                              index={i}
+                              isOpen={openId === skill.id}
+                              onToggle={() => setOpenId(openId === skill.id ? null : skill.id)}
+                              isMobile={isMobile}
+                            />
+                          ))}
+                        </div>
+                      ))
+                    : filtered.map((skill, i) => (
+                        <SkillRow
+                          key={skill.id}
+                          skill={skill}
+                          p={p}
+                          index={i}
+                          isOpen={openId === skill.id}
+                          onToggle={() => setOpenId(openId === skill.id ? null : skill.id)}
+                          isMobile={isMobile}
+                        />
+                      ))}
+                  <div style={{ height: 8 }} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

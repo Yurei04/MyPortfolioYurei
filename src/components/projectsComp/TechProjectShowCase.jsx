@@ -6,8 +6,8 @@ import { useTheme } from "@/app/themeProvider";
 import {
   Brain, Globe, Gamepad2, Shield, Mic, Heart,
   Trophy, Medal, Star, ExternalLink, Tag, Calendar,
-  X, ChevronLeft, ChevronRight, LayoutGrid,
-  Maximize2, Terminal, Leaf
+  X, ChevronLeft, ChevronRight, LayoutGrid, Menu,
+  Maximize2, Terminal, Leaf, Home
 } from "lucide-react";
 import Image from "next/image";
 
@@ -262,7 +262,7 @@ const SIZES = [
   { id: "lg", label: "L", cols: "repeat(auto-fill, minmax(370px, 1fr))", imgH: 210, bodyPad: "18px 18px" },
 ];
 const STATS = [
-  { value: "10", label: "Projects" },
+  { value: "16", label: "Projects" },
   { value: "4",  label: "Awards"   },
   { value: "3+", label: "Years"    },
 ];
@@ -437,8 +437,8 @@ function AwardBadge({ award, p }) {
   );
 }
 
-// ── Grid Card ──────────────────────────────────────────────
-function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
+// ── Grid Card (Responsive) ────────────────────────────────────
+function ProjectCard({ project, p, delay, onSelect, isSelected, sz, isMobile }) {
   const { Icon } = project;
   const isSmall = sz.id === "sm";
 
@@ -471,7 +471,7 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
       }}
     >
       {/* Thumbnail */}
-      <div style={{ position: "relative", height: sz.imgH, flexShrink: 0, overflow: "hidden" }}>
+      <div style={{ position: "relative", height: isMobile ? 160 : sz.imgH, flexShrink: 0, overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: project.gradient, transition: "transform 0.4s", }} />
         {project.image && (
           <Image
@@ -506,7 +506,7 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
           }}>
             <Icon size={12} color={project.accent} strokeWidth={1.8} />
           </div>
-          {!isSmall && (
+          {!isSmall && !isMobile && (
             <span style={{
               fontFamily: p.mono, fontSize: "0.46rem",
               letterSpacing: "0.17em", textTransform: "uppercase",
@@ -520,7 +520,7 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
           )}
         </div>
         {project.award && <AwardBadge award={project.award} p={p} />}
-        {!isSmall && (
+        {!isSmall && !isMobile && (
           <div style={{ position: "absolute", bottom: 11, left: 11, display: "flex", alignItems: "center", gap: 5 }}>
             <Calendar size={8} color="rgba(255,255,255,0.5)" />
             <span style={{
@@ -532,25 +532,22 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
             </span>
           </div>
         )}
-        <div style={{ position: "absolute", bottom: 9, right: 9, opacity: 0.35 }}>
-          <Maximize2 size={10} color="rgba(255,255,255,0.9)" />
-        </div>
       </div>
 
       {/* Body */}
-      <div style={{ padding: sz.bodyPad, display: "flex", flexDirection: "column", flex: 1 }}>
+      <div style={{ padding: isMobile ? "12px 12px" : sz.bodyPad, display: "flex", flexDirection: "column", flex: 1 }}>
         <h3 style={{
           fontFamily: p.fontFamily,
-          fontSize: isSmall ? "0.75rem" : sz.id === "lg" ? "clamp(0.95rem,1.2vw,1.08rem)" : "clamp(0.85rem,1.05vw,0.98rem)",
+          fontSize: isMobile ? "0.9rem" : "clamp(0.85rem,1.05vw,0.98rem)",
           fontWeight: 700, lineHeight: 1.2, color: p.title,
           marginBottom: 6, letterSpacing: "-0.01em",
         }}>
           {project.title}
         </h3>
-        <div style={{ height: 1, marginBottom: isSmall ? 6 : 9, background: `linear-gradient(90deg, ${project.accent}55, transparent)` }} />
-        {sz.id !== "sm" && (
+        <div style={{ height: 1, marginBottom: 9, background: `linear-gradient(90deg, ${project.accent}55, transparent)` }} />
+        {!isMobile && (
           <p style={{
-            fontFamily: p.mono, fontSize: sz.id === "lg" ? "0.63rem" : "0.59rem",
+            fontFamily: p.mono, fontSize: "0.59rem",
             lineHeight: 1.74, color: p.desc,
             marginBottom: 10,
             display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
@@ -559,7 +556,7 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
           </p>
         )}
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-          {project.tags.slice(0, isSmall ? 2 : sz.id === "lg" ? 4 : 3).map((tag) => (
+          {project.tags.slice(0, isMobile ? 2 : 3).map((tag) => (
             <span key={tag} style={{
               fontFamily: p.mono, fontSize: "0.42rem",
               letterSpacing: "0.08em", textTransform: "uppercase",
@@ -569,9 +566,9 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
               {tag}
             </span>
           ))}
-          {project.tags.length > (isSmall ? 2 : sz.id === "lg" ? 4 : 3) && (
+          {project.tags.length > (isMobile ? 2 : 3) && (
             <span style={{ fontFamily: p.mono, fontSize: "0.42rem", color: p.sub, opacity: 0.6, alignSelf: "center" }}>
-              +{project.tags.length - (isSmall ? 2 : sz.id === "lg" ? 4 : 3)}
+              +{project.tags.length - (isMobile ? 2 : 3)}
             </span>
           )}
         </div>
@@ -580,7 +577,264 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz }) {
   );
 }
 
-// ── Expanded Modal ─────────────────────────────────────────
+// ── Mobile Modal (Full Screen) ─────────────────────────────────
+function MobileProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
+  const { Icon } = project;
+  const currentIdx = filtered.findIndex((pr) => pr.id === project.id);
+
+  const AwardIcon2 = project.award
+    ? (project.award.place === "1st Place" ? Trophy : project.award.place === "2nd Place" ? Medal : Star)
+    : null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        style={{
+          position: "fixed", inset: 0, zIndex: 900,
+          background: "rgba(0,0,0,0.92)",
+          backdropFilter: "blur(12px)",
+        }}
+      />
+
+      {/* Full Screen Modal */}
+      <motion.div
+        layoutId={`card-${project.id}`}
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 60 }}
+        transition={{ type: "spring", stiffness: 300, damping: 32 }}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+          zIndex: 910,
+          display: "flex",
+          flexDirection: "column",
+          maxHeight: "100dvh",
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Image Section */}
+        <div style={{ position: "relative", height: "280px", flexShrink: 0 }}>
+          <div style={{ position: "absolute", inset: 0, background: project.gradient }} />
+          {project.image && (
+            <Image
+              src={project.image}
+              alt={project.title}
+              width={100}
+              height={100}
+              onError={(e) => { e.target.style.display = "none"; }}
+              style={{
+                position: "absolute", inset: 0,
+                width: "100%", height: "100%",
+                objectFit: "cover", opacity: 0.7,
+              }}
+            />
+          )}
+          <div style={{ position: "absolute", inset: 0, background: p.imgOverlay }} />
+
+          {/* Header with close button */}
+          <div style={{
+            position: "absolute",
+            top: 0, left: 0, right: 0,
+            padding: "16px 16px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 8,
+                background: "rgba(0,0,0,0.44)",
+                border: `1px solid ${project.accent}66`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Icon size={14} color={project.accent} />
+              </div>
+              <div>
+                <div style={{ fontFamily: p.mono, fontSize: "0.45rem", color: "rgba(255,255,255,0.7)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                  {project.category}
+                </div>
+              </div>
+            </div>
+            <motion.button
+              onClick={onClose}
+              whileTap={{ scale: 0.9 }}
+              style={{
+                width: 36, height: 36, borderRadius: "50%",
+                background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.2)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", color: "white", outline: "none",
+              }}
+            >
+              <X size={16} />
+            </motion.button>
+          </div>
+
+          {/* Award badge */}
+          {project.award && (
+            <div style={{ position: "absolute", bottom: 16, left: 16 }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: p.awardBg, border: `1px solid ${p.awardBd}`,
+                borderRadius: 8, padding: "6px 12px",
+                backdropFilter: "blur(10px)",
+              }}>
+                <AwardIcon2 size={12} color={p.awardC} />
+                <div style={{ fontFamily: p.mono, fontSize: "0.55rem", color: p.awardC, fontWeight: 700 }}>
+                  {project.award.place}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Content Section */}
+        <div style={{
+          background: p.modalBg,
+          flex: 1,
+          padding: "20px 16px 120px",
+          display: "flex",
+          flexDirection: "column",
+        }}>
+          {/* Period */}
+          <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 12 }}>
+            <Calendar size={9} color={p.sub} />
+            <span style={{ fontFamily: p.mono, fontSize: "0.48rem", letterSpacing: "0.14em", textTransform: "uppercase", color: p.sub }}>
+              {project.period}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h2 style={{
+            fontFamily: p.fontFamily,
+            fontSize: "clamp(1.3rem, 5vw, 1.6rem)",
+            fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.01em",
+            backgroundImage: p.headingGrad,
+            backgroundClip: "text", WebkitBackgroundClip: "text",
+            color: "transparent", marginBottom: 12,
+          }}>
+            {project.title}
+          </h2>
+
+          <div style={{ height: 1, marginBottom: 16, background: `linear-gradient(90deg, ${project.accent}66, transparent)` }} />
+
+          {/* Description */}
+          <p style={{
+            fontFamily: p.mono, fontSize: "0.62rem",
+            lineHeight: 1.8, color: p.desc,
+            marginBottom: 18,
+          }}>
+            {project.desc}
+          </p>
+
+          {/* Tags */}
+          <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 20 }}>
+            {project.tags.map((tag) => (
+              <span key={tag} style={{
+                fontFamily: p.mono, fontSize: "0.44rem", letterSpacing: "0.08em",
+                textTransform: "uppercase", padding: "3px 8px", borderRadius: 999,
+                background: p.badgeBg, border: `1px solid ${p.badgeBd}`, color: p.badgeC,
+              }}>
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Link */}
+          {project.link && project.link !== "#" && (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                fontFamily: p.mono, fontSize: "0.54rem",
+                letterSpacing: "0.16em", textTransform: "uppercase",
+                color: project.accent, textDecoration: "none",
+                padding: "10px 18px", borderRadius: 10,
+                background: `${project.accent}1a`,
+                border: `1px solid ${project.accent}44`,
+                alignSelf: "flex-start",
+                marginTop: "auto",
+              }}
+            >
+              View Project <ExternalLink size={12} />
+            </a>
+          )}
+        </div>
+
+        {/* Navigation Strip (Bottom) */}
+        <div style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: p.navBg,
+          borderTop: `1px solid ${p.navBd}`,
+          padding: "12px 12px 16px",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          overflowX: "auto",
+          scrollbarWidth: "none",
+        }}>
+          {filtered.map((pr, idx) => {
+            const isActive = pr.id === project.id;
+            return (
+              <motion.button
+                key={pr.id}
+                onClick={() => onNavigateTo(pr.id)}
+                whileTap={{ scale: 0.92 }}
+                style={{
+                  height: 50,
+                  minWidth: isActive ? 120 : 50,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  border: `2px solid ${isActive ? p.thumbActiveBd : p.thumbBd}`,
+                  cursor: "pointer",
+                  outline: "none",
+                  position: "relative",
+                  flexShrink: 0,
+                }}
+              >
+                <div style={{ position: "absolute", inset: 0, background: pr.gradient }} />
+                <div style={{
+                  position: "absolute", inset: 0,
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "0 10px",
+                }}>
+                  <pr.Icon size={13} color={pr.accent} style={{ flexShrink: 0 }} />
+                  {isActive && (
+                    <span style={{
+                      fontFamily: p.mono, fontSize: "0.43rem",
+                      color: "rgba(255,255,255,0.85)",
+                      whiteSpace: "nowrap",
+                      flex: 1,
+                    }}>
+                      {pr.title.split(" ")[0]}
+                    </span>
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+// ── Desktop Modal ──────────────────────────────────────────
 function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
   const stripRef = useRef(null);
   const { Icon } = project;
@@ -588,7 +842,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
   const prev = filtered[(currentIdx - 1 + filtered.length) % filtered.length];
   const next = filtered[(currentIdx + 1) % filtered.length];
 
-  // Keyboard nav
   useEffect(() => {
     const fn = (e) => {
       if (e.key === "Escape")      onClose();
@@ -599,7 +852,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
     return () => window.removeEventListener("keydown", fn);
   }, [currentIdx, filtered, onClose, onNavigateTo]);
 
-  // Auto-scroll active thumb into view
   useEffect(() => {
     if (!stripRef.current) return;
     const el = stripRef.current.querySelector("[data-active='true']");
@@ -612,7 +864,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
 
   return (
     <>
-      {/* ── Backdrop ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -627,19 +878,16 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
         }}
       />
 
-      {/* ── Modal layer: flex row = [arrow] [card] [arrow] ── */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 910,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        // bottom padding reserves space for the thumbnail strip
         paddingBottom: 90,
         paddingLeft: 16,
         paddingRight: 16,
         pointerEvents: "none",
       }}>
-        {/* ── Left arrow ── */}
         <motion.button
           onClick={() => onNavigateTo(prev.id)}
           whileHover={{ scale: 1.14, background: p.arrowHBg }}
@@ -659,7 +907,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
           <ChevronLeft size={18} />
         </motion.button>
 
-        {/* ── Expanded card (shares layoutId with grid card) ── */}
         <motion.div
           layoutId={`card-${project.id}`}
           transition={{ type: "spring", stiffness: 290, damping: 36 }}
@@ -677,7 +924,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
             flexShrink: 0,
           }}
         >
-          {/* LEFT – image pane */}
           <div style={{ width: "42%", flexShrink: 0, position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: 0, background: project.gradient }} />
             {project.image && (
@@ -699,13 +945,11 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
               position: "absolute", inset: 0,
               background: `linear-gradient(145deg, ${project.accent}1a 0%, transparent 50%, rgba(0,0,0,0.28) 100%)`,
             }} />
-            {/* Glow */}
             <div style={{
               position: "absolute", top: -60, right: -60,
               width: 220, height: 220, borderRadius: "50%",
               background: project.accent, opacity: 0.22, filter: "blur(60px)",
             }} />
-            {/* Category */}
             <div style={{ position: "absolute", top: 20, left: 20, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{
                 width: 36, height: 36, borderRadius: 10,
@@ -725,7 +969,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
                 {project.category}
               </span>
             </div>
-            {/* Award panel */}
             {project.award && (
               <div style={{ position: "absolute", bottom: 20, left: 20 }}>
                 <div style={{
@@ -748,9 +991,7 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
             )}
           </div>
 
-          {/* RIGHT – content pane */}
           <div style={{ flex: 1, padding: "26px 28px 24px", display: "flex", flexDirection: "column", overflowY: "auto" }}>
-            {/* Close */}
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
               <motion.button
                 onClick={onClose}
@@ -766,14 +1007,12 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
                 <X size={14} />
               </motion.button>
             </div>
-            {/* Period */}
             <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 10 }}>
               <Calendar size={10} color={p.sub} />
               <span style={{ fontFamily: p.mono, fontSize: "0.5rem", letterSpacing: "0.16em", textTransform: "uppercase", color: p.sub }}>
                 {project.period}
               </span>
             </div>
-            {/* Title */}
             <h2 style={{
               fontFamily: p.fontFamily,
               fontSize: "clamp(1.4rem, 2.2vw, 1.85rem)",
@@ -785,7 +1024,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
               {project.title}
             </h2>
             <div style={{ height: 1.5, marginBottom: 16, background: `linear-gradient(90deg, ${project.accent}77, transparent)` }} />
-            {/* Desc */}
             <p style={{
               fontFamily: p.mono, fontSize: "0.64rem",
               lineHeight: 1.84, color: p.desc,
@@ -793,7 +1031,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
             }}>
               {project.desc}
             </p>
-            {/* Tags */}
             <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 22, alignItems: "center" }}>
               <Tag size={10} color={p.sub} style={{ flexShrink: 0 }} />
               {project.tags.map((tag) => (
@@ -806,7 +1043,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
                 </span>
               ))}
             </div>
-            {/* Link */}
             {project.link && project.link !== "#" && (
               <a
                 href={project.link}
@@ -829,7 +1065,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
           </div>
         </motion.div>
 
-        {/* ── Right arrow ── */}
         <motion.button
           onClick={() => onNavigateTo(next.id)}
           whileHover={{ scale: 1.14, background: p.arrowHBg }}
@@ -850,7 +1085,6 @@ function ProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
         </motion.button>
       </div>
 
-      {/* ── Project strip navbar (bottom of screen) ── */}
       <motion.div
         initial={{ y: 70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -947,14 +1181,21 @@ export default function TechProjectShowCase() {
   const [filter,   setFilter]   = useState("All");
   const [selected, setSelected] = useState(null);
   const [sizeId,   setSizeId]   = useState("md");
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const filtered = filter === "All" ? PROJECTS : PROJECTS.filter((pr) => pr.category === filter);
   const sz       = SIZES.find((s) => s.id === sizeId) ?? SIZES[1];
   const selProj  = PROJECTS.find((pr) => pr.id === selected) ?? null;
 
-  // If active filter hides the selected project, close modal
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (selected && !filtered.find((pr) => pr.id === selected)) setSelected(null);
   }, [filter, filtered, selected]);
 
@@ -976,63 +1217,88 @@ export default function TechProjectShowCase() {
         }} />
       )}
 
-      <div className="relative z-10" style={{ padding: "80px 48px 40px" }}>
+      <div className="relative z-10" style={{ padding: isMobile ? "60px 16px 40px" : "80px 48px 40px" }}>
 
         {/* Header */}
-        <div style={{ marginBottom: 50, animation: "fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
-            <div>
-              <p style={{ fontFamily: p.mono, fontSize: "0.65rem", letterSpacing: "0.34em", textTransform: "uppercase", color: p.sub, marginBottom: 10 }}>
+        <div style={{ marginBottom: isMobile ? 32 : 50, animation: "fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both" }}>
+          <div style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: isMobile ? "center" : "space-between",
+            flexWrap: "wrap",
+            gap: isMobile ? 12 : 20,
+            flexDirection: isMobile ? "column" : "row",
+          }}>
+            <div style={{ textAlign: isMobile ? "center" : "left", width: isMobile ? "100%" : "auto" }}>
+              <p style={{
+                fontFamily: p.mono,
+                fontSize: isMobile ? "0.6rem" : "0.65rem",
+                letterSpacing: "0.34em",
+                textTransform: "uppercase",
+                color: p.sub,
+                marginBottom: 10,
+              }}>
                 {p.eyebrow}
               </p>
               <h1 style={{
-                fontFamily: p.fontFamily, fontSize: "clamp(2.2rem, 4vw, 3.4rem)",
-                fontWeight: 700, lineHeight: 0.92, letterSpacing: "-0.02em",
+                fontFamily: p.fontFamily,
+                fontSize: isMobile ? "clamp(1.6rem, 5vw, 2.2rem)" : "clamp(2.2rem, 4vw, 3.4rem)",
+                fontWeight: 700,
+                lineHeight: 0.92,
+                letterSpacing: "-0.02em",
                 backgroundImage: p.headingGrad,
-                backgroundClip: "text", WebkitBackgroundClip: "text", color: "transparent",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
               }}>
                 {p.sectionLabel}
               </h1>
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {STATS.map((s) => (
-                <div key={s.label} style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  padding: "8px 16px", borderRadius: 999,
-                  background: "rgba(255,255,255,0.04)",
-                  border: `1px solid ${p.statBd}`,
-                  backdropFilter: "blur(12px)",
-                }}>
-                  <span style={{
-                    fontFamily: p.fontFamily, fontSize: "1.2rem", fontWeight: 700,
-                    backgroundImage: p.headingGrad,
-                    backgroundClip: "text", WebkitBackgroundClip: "text", color: "transparent", lineHeight: 1,
+            {!isMobile && (
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {STATS.map((s) => (
+                  <div key={s.label} style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    padding: "8px 16px", borderRadius: 999,
+                    background: "rgba(255,255,255,0.04)",
+                    border: `1px solid ${p.statBd}`,
+                    backdropFilter: "blur(12px)",
                   }}>
-                    {s.value}
-                  </span>
-                  <span style={{ fontFamily: p.mono, fontSize: "0.56rem", letterSpacing: "0.14em", textTransform: "uppercase", color: p.sub }}>
-                    {s.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+                    <span style={{
+                      fontFamily: p.fontFamily, fontSize: "1.2rem", fontWeight: 700,
+                      backgroundImage: p.headingGrad,
+                      backgroundClip: "text", WebkitBackgroundClip: "text", color: "transparent", lineHeight: 1,
+                    }}>
+                      {s.value}
+                    </span>
+                    <span style={{ fontFamily: p.mono, fontSize: "0.56rem", letterSpacing: "0.14em", textTransform: "uppercase", color: p.sub }}>
+                      {s.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <div style={{
-            height: 1.5, marginTop: 24, transformOrigin: "left center",
-            background: `linear-gradient(90deg, ${p.lineColor} 0%, ${p.lineGlow} 65%, transparent 100%)`,
-            animation: "slideX 1.1s cubic-bezier(0.22,1,0.36,1) 0.15s both",
-          }} />
+          {!isMobile && (
+            <div style={{
+              height: 1.5, marginTop: 24, transformOrigin: "left center",
+              background: `linear-gradient(90deg, ${p.lineColor} 0%, ${p.lineGlow} 65%, transparent 100%)`,
+              animation: "slideX 1.1s cubic-bezier(0.22,1,0.36,1) 0.15s both",
+            }} />
+          )}
         </div>
 
-        {/* ── Filter tabs + Size controls (inline, same row) ── */}
+        {/* Filter tabs + Size controls */}
         <div style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          marginBottom: 34,
+          justifyContent: isMobile ? "flex-start" : "space-between",
+          gap: isMobile ? 8 : 12,
+          marginBottom: isMobile ? 24 : 34,
           flexWrap: "wrap",
           animation: "fadeUp 0.5s ease 0.18s both",
+          overflowX: isMobile ? "auto" : "visible",
+          scrollbarWidth: "none",
         }}>
           {/* Category filters */}
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -1045,73 +1311,91 @@ export default function TechProjectShowCase() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   style={{
-                    fontFamily: p.mono, fontSize: "0.53rem", letterSpacing: "0.2em",
-                    textTransform: "uppercase", padding: "6px 16px", borderRadius: 999,
+                    fontFamily: p.mono,
+                    fontSize: isMobile ? "0.5rem" : "0.53rem",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    padding: isMobile ? "5px 12px" : "6px 16px",
+                    borderRadius: 999,
                     border: `1px solid ${isA ? p.cardHoverBorder : p.filterBd}`,
                     background: isA ? p.filterActiveBg : p.filterBg,
                     color: isA ? p.filterActiveC : p.filterC,
-                    cursor: "pointer", backdropFilter: "blur(12px)", outline: "none",
+                    cursor: "pointer",
+                    backdropFilter: "blur(12px)",
+                    outline: "none",
                     transition: "background 0.18s, color 0.18s, border-color 0.18s",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {cat}
-                  <span style={{ marginLeft: 6, opacity: 0.5 }}>
-                    {cat === "All" ? PROJECTS.length : PROJECTS.filter((pr) => pr.category === cat).length}
-                  </span>
+                  {!isMobile && (
+                    <span style={{ marginLeft: 6, opacity: 0.5 }}>
+                      {cat === "All" ? PROJECTS.length : PROJECTS.filter((pr) => pr.category === cat).length}
+                    </span>
+                  )}
                 </motion.button>
               );
             })}
           </div>
 
-          {/* Card size controls — inline, right side */}
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            background: p.navBg,
-            border: `1.5px solid ${p.navBd}`,
-            borderRadius: 999,
-            padding: "5px 8px",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.22)",
-          }}>
-            <LayoutGrid size={12} color={p.sub} style={{ marginRight: 3, opacity: 0.65 }} />
-            <span style={{
-              fontFamily: p.mono, fontSize: "0.46rem", letterSpacing: "0.18em",
-              textTransform: "uppercase", color: p.sub, marginRight: 4, opacity: 0.65,
-              whiteSpace: "nowrap",
+          {/* Card size controls — DESKTOP ONLY */}
+          {!isMobile && (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              background: p.navBg,
+              border: `1.5px solid ${p.navBd}`,
+              borderRadius: 999,
+              padding: "5px 8px",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.22)",
             }}>
-              Size
-            </span>
-            {SIZES.map((s) => {
-              const isA = sizeId === s.id;
-              return (
-                <motion.button
-                  key={s.id}
-                  onClick={() => setSizeId(s.id)}
-                  whileHover={{ scale: 1.12 }}
-                  whileTap={{ scale: 0.88 }}
-                  style={{
-                    width: 30, height: 30, borderRadius: 999,
-                    border: `1px solid ${isA ? p.cardHoverBorder : p.navBd}`,
-                    background: isA ? p.sizeActiveBg : "transparent",
-                    color: isA ? p.sizeActiveC : p.filterC,
-                    fontFamily: p.mono, fontSize: "0.58rem", fontWeight: 700,
-                    cursor: "pointer", outline: "none",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "all 0.18s", letterSpacing: "0.04em",
-                  }}
-                >
-                  {s.label}
-                </motion.button>
-              );
-            })}
-          </div>
+              <LayoutGrid size={12} color={p.sub} style={{ marginRight: 3, opacity: 0.65 }} />
+              <span style={{
+                fontFamily: p.mono, fontSize: "0.46rem", letterSpacing: "0.18em",
+                textTransform: "uppercase", color: p.sub, marginRight: 4, opacity: 0.65,
+                whiteSpace: "nowrap",
+              }}>
+                Size
+              </span>
+              {SIZES.map((s) => {
+                const isA = sizeId === s.id;
+                return (
+                  <motion.button
+                    key={s.id}
+                    onClick={() => setSizeId(s.id)}
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.88 }}
+                    style={{
+                      width: 30, height: 30, borderRadius: 999,
+                      border: `1px solid ${isA ? p.cardHoverBorder : p.navBd}`,
+                      background: isA ? p.sizeActiveBg : "transparent",
+                      color: isA ? p.sizeActiveC : p.filterC,
+                      fontFamily: p.mono, fontSize: "0.58rem", fontWeight: 700,
+                      cursor: "pointer", outline: "none",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      transition: "all 0.18s", letterSpacing: "0.04em",
+                    }}
+                  >
+                    {s.label}
+                  </motion.button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Grid */}
-        <motion.div layout style={{ display: "grid", gridTemplateColumns: sz.cols, gap: 16 }}>
+        <motion.div
+          layout
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : sz.cols,
+            gap: isMobile ? 12 : 16,
+          }}
+        >
           <AnimatePresence>
             {filtered.map((proj, i) => (
               <ProjectCard
@@ -1122,6 +1406,7 @@ export default function TechProjectShowCase() {
                 onSelect={setSelected}
                 isSelected={selected === proj.id}
                 sz={sz}
+                isMobile={isMobile}
               />
             ))}
           </AnimatePresence>
@@ -1137,14 +1422,25 @@ export default function TechProjectShowCase() {
       {/* Modal */}
       <AnimatePresence>
         {selProj && (
-          <ProjectModal
-            key={selProj.id}
-            project={selProj}
-            p={p}
-            filtered={filtered}
-            onClose={() => setSelected(null)}
-            onNavigateTo={setSelected}
-          />
+          isMobile ? (
+            <MobileProjectModal
+              key={selProj.id}
+              project={selProj}
+              p={p}
+              filtered={filtered}
+              onClose={() => setSelected(null)}
+              onNavigateTo={setSelected}
+            />
+          ) : (
+            <ProjectModal
+              key={selProj.id}
+              project={selProj}
+              p={p}
+              filtered={filtered}
+              onClose={() => setSelected(null)}
+              onNavigateTo={setSelected}
+            />
+          )
         )}
       </AnimatePresence>
     </div>
