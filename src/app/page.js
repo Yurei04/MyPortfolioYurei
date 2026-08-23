@@ -1,12 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import ExperiencePage from "@/pages/experiencePage/page";
 import HeroPage from "@/pages/hero/page";
-import SkillsPage from "@/pages/skillsPage/page"; 
 import ThemeSwitcher from "./themeSwitch"; 
 import ProjectsPage from "@/pages/projectPage/page";
 import ContactPage from "@/pages/contactPage/page";
+import dynamic from "next/dynamic";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -38,6 +37,27 @@ const sectionVariants = {
     },
   },
 };
+
+const HeavyExperience = dynamic(() => 
+  import("@/pages/experiencePage/page"),
+  {
+    loading: () => <p>Loading experience Page...</p>,
+  }
+)
+
+const HeavySkills = dynamic(() => 
+  import("@/pages/skillsPage/page"),
+  {
+    loading: () => <p>Loading Skills Page...</p>,
+  }
+)
+
+const HeavyProjects = dynamic(() => 
+  import("@/pages/projectPage/page"),
+  {
+    loading: () => <p>Loading Projects Page...</p>,
+  }
+)
 
 export default function Home() {
   return (
@@ -72,8 +92,9 @@ export default function Home() {
         initial="hidden"
         exit="exit"
         viewport={{ once: false, amount: 0.3 }}
+        className="[content-contain] [content-visibility-auto] [contain-intrinsic-size-[0_800px]]"
       >
-        <ExperiencePage />
+        <HeavyExperience />
       </motion.div>
 
       <motion.div
@@ -82,11 +103,14 @@ export default function Home() {
         initial="hidden"
         exit="exit"
         viewport={{ once: false, amount: 0.3 }}
+        className="[content-contain] [content-visibility-auto] [contain-intrinsic-size-[0_800px]]"
       >
-        <SkillsPage />
+        <HeavySkills />
       </motion.div>
 
-      <ProjectsPage />
+      <div className="[content-contain] [content-visibility-auto] [contain-intrinsic-size-[0_800px]]">
+        <HeavyProjects />
+      </div>
 
       <motion.div
         variants={sectionVariants}

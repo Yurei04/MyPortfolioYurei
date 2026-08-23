@@ -477,13 +477,11 @@ function ProjectCard({ project, p, delay, onSelect, isSelected, sz, isMobile }) 
           <Image
             src={project.image}
             alt={project.title}
-            width={100}
-            height={100}
+            fill
+            size="(maxWidth: 768px) 100vw, 50vw"
             onError={(e) => { e.target.style.display = "none"; }}
             style={{
-              position: "absolute", inset: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover", opacity: 0.72,
+              position: "absolute", inset: 0, opacity: 0.72,
               mixBlendMode: "luminosity",
             }}
           />
@@ -630,13 +628,11 @@ function MobileProjectModal({ project, p, filtered, onClose, onNavigateTo }) {
             <Image
               src={project.image}
               alt={project.title}
-              width={100}
-              height={100}
+              fill
+              sizes="(maxWidth: 768px) 100vw, 50vw"
               onError={(e) => { e.target.style.display = "none"; }}
               style={{
-                position: "absolute", inset: 0,
-                width: "100%", height: "100%",
-                objectFit: "cover", opacity: 0.7,
+                position: "absolute", inset: 0, opacity: 0.7,
               }}
             />
           )}
