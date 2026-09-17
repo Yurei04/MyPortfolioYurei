@@ -7,6 +7,17 @@ import { Bot, Monitor, Layers, PenTool, Sparkles, Zap } from "lucide-react";
 // ── Experience data with category ─────────────────────────
 const EXPERIENCES = [
   {
+    id:       "accenture-1",
+    company:  "Accenture",
+    role:     "Cloud Elite Intern",
+    type:     "Internship",
+    period:   "Aug - Sept 2026",
+    location: "On-site · Baguio City",
+    Icon:     Zap,
+    category: "tech",
+    desc:     "Cloud Elite intern learning cloud services, and full stack developement via use of react and springboot",
+  },
+  {
     id:       "kinetiks-1",
     company:  "KINETIKS",
     role:     "AI Solutions Contractor",

@@ -352,21 +352,20 @@ function MediaItem({ item, accent, onSelect }) {
                 style={{ background: `${accent}11` }}
               />
             )}
-            {/* Regular img tag for better compatibility */}
-            <img
-              src={item.src}
-              alt={item.title}
-              onLoad={() => setImgLoaded(true)}
-              onError={() => {
-                setImgError(true);
-                setImgLoaded(false);
-              }}
-              className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 ${
-                !imgLoaded ? "opacity-0" : "opacity-100"
-              }`}
-              crossOrigin="anonymous"
-              loading="lazy"
-            />
+              <Image
+                src={item.src}
+                alt={item.title}
+                fill
+                onLoad={() => setImgLoaded(true)}
+                onError={() => {
+                  setImgError(true);
+                  setImgLoaded(false);
+                }}
+                className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 ${
+                  !imgLoaded ? "opacity-0" : "opacity-100"
+                }`}
+                sizes="(max-width: 768px) 100vw, 400px"
+              />
           </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center" style={{ background: `${accent}22` }}>
